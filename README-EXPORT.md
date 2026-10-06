@@ -29,7 +29,7 @@ The SQL files under drizzle/ are PostgreSQL-compatible and can be applied by Dri
 An empty new database needs the migrations before the API can read/write records. The export does not include equipment, staff, audit or activity records from the live database. A separate data export is needed to migrate existing records.
 
 ## Authentication
-The app now uses in-app session authentication with secure HTTP-only cookies and a login page at /login. Configure APP_SESSION_SECRET in production and replace demo credentials using APP_LOGIN_EMAIL and APP_LOGIN_PASSWORD.
+The app now uses in-app session authentication with secure HTTP-only cookies and a login page at /login. Configure APP_SESSION_SECRET in production (minimum 32 characters), and set APP_LOGIN_EMAIL and APP_LOGIN_PASSWORD to your staff credentials.
 
 For production, replace the dummy login credentials with your own staff auth flow or SSO provider.
 

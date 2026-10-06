@@ -42,7 +42,6 @@ export default function LoginForm({ returnTo }: LoginFormProps) {
         <div className="login-brand">Dental Stars Asset Manager</div>
         <h1 id="login-title">Sign in</h1>
         <p>Use the dummy login to open the equipment register.</p>
-        <p>Email: demo@dentalstars.local | Password: dentalstars123</p>
 
         <form onSubmit={onSubmit}>
           <label>

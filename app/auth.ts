@@ -22,15 +22,26 @@ const SESSION_COOKIE_NAME = "dsam_session";
 const SESSION_TTL_SECONDS = 60 * 60 * 12;
 const DEFAULT_LOGIN_EMAIL = "demo@dentalstars.local";
 const DEFAULT_LOGIN_PASSWORD = "dentalstars123";
+const DEFAULT_SESSION_SECRET = "dev-only-change-session-secret";
 
 const encoder = new TextEncoder();
 
 export function getLoginPassword(): string {
-  return process.env.APP_LOGIN_PASSWORD || DEFAULT_LOGIN_PASSWORD;
+  return readConfig(
+    "APP_LOGIN_PASSWORD",
+    DEFAULT_LOGIN_PASSWORD,
+    "Set APP_LOGIN_PASSWORD in production.",
+  );
 }
 
 export function getLoginEmail(): string {
-  return (process.env.APP_LOGIN_EMAIL || DEFAULT_LOGIN_EMAIL).trim().toLowerCase();
+  return readConfig(
+    "APP_LOGIN_EMAIL",
+    DEFAULT_LOGIN_EMAIL,
+    "Set APP_LOGIN_EMAIL in production.",
+  )
+    .trim()
+    .toLowerCase();
 }
 
 export async function getAppUser(): Promise<AppUser | null> {
@@ -157,10 +168,7 @@ async function verifyToken(token: string): Promise<SessionClaims | null> {
 }
 
 async function sign(input: string): Promise<string> {
-  const secret =
-    process.env.APP_SESSION_SECRET ||
-    process.env.AUTH_SECRET ||
-    "dev-only-change-session-secret";
+  const secret = getSessionSecret();
   const key = await crypto.subtle.importKey(
     "raw",
     encoder.encode(secret),
@@ -170,4 +178,34 @@ async function sign(input: string): Promise<string> {
   );
   const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(input));
   return Buffer.from(new Uint8Array(signature)).toString("base64url");
+}
+
+function getSessionSecret(): string {
+  const secret =
+    process.env.APP_SESSION_SECRET || process.env.AUTH_SECRET || DEFAULT_SESSION_SECRET;
+
+  if (process.env.NODE_ENV === "production") {
+    const usingDefault =
+      secret === DEFAULT_SESSION_SECRET ||
+      !process.env.APP_SESSION_SECRET;
+    if (usingDefault) {
+      throw new Error("APP_SESSION_SECRET must be set in production.");
+    }
+    if (secret.length < 32) {
+      throw new Error("APP_SESSION_SECRET must be at least 32 characters in production.");
+    }
+  }
+
+  return secret;
+}
+
+function readConfig(name: string, fallback: string, productionHint: string): string {
+  const value = process.env[name];
+  if (value && value.trim()) return value;
+
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(productionHint);
+  }
+
+  return fallback;
 }
