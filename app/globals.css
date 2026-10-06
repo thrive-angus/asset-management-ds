@@ -24,3 +24,18 @@
 
 .mobile-nav-backdrop{display:none;border:0}
 @media(max-width:1024px){.mobile-nav-backdrop{display:block;position:fixed;inset:0;background:rgba(5,16,91,.45);backdrop-filter:blur(1px);z-index:50}}
+
+.header-actions{display:flex;align-items:center;gap:12px}
+.accountmenu{position:relative}
+.accountbtn{display:flex;align-items:center;gap:8px;border:1px solid #d4e2ec;background:#fff;color:#1b2a63;padding:8px 10px;border-radius:7px;font-size:12px;font-weight:600}
+.accountbtn:hover{background:#f3f8ff}
+.accountdropdown{position:absolute;right:0;top:calc(100% + 8px);min-width:180px;background:#fff;border:1px solid #dbe5f2;border-radius:9px;box-shadow:0 16px 32px rgba(7,20,76,.14);padding:6px;z-index:90}
+.accountitem{width:100%;display:flex;align-items:center;gap:8px;border:0;background:#fff;color:#23366f;text-align:left;padding:9px 10px;border-radius:7px;font-size:12px}
+.accountitem:hover{background:#eef5ff}
+.accountitem.danger{color:#8e2a2a}
+.accountitem.danger:hover{background:#fff0f0}
+.accountdetails{display:grid;gap:12px;margin-top:12px}
+.accountdetails>div{padding:12px 14px;background:#f7f9fd;border:1px solid #e3e9f4;border-radius:8px}
+.accountdetails small{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:#7f8dab}
+.accountdetails b{display:block;margin-top:4px;color:#1a2d67}
+@media(max-width:750px){.header-actions{gap:8px}.accountbtn{max-width:145px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:8px}.accountbtn span{overflow:hidden;text-overflow:ellipsis}.accountdropdown{right:0;min-width:165px}}
