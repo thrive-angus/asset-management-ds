@@ -86,7 +86,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
   );
   const shown = rows.filter(
     (r: AccessRow) =>
-      (status === 'All' || r.status === status) &&
+      (status === 'All' || (status === 'Reset Pending' ? !!r.login?.mustResetPassword : r.status === status)) &&
       [r.person?.name, r.email, r.role, r.login?.displayName]
         .some(v => String(v || '').toLowerCase().includes(query.trim().toLowerCase())),
   );
@@ -192,7 +192,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
         <label>
           Access Status
           <select value={status} onChange={e => setStatus(e.target.value)}>
-            {['All', 'No Role Assigned', 'Awaiting Approval', 'Approved', 'Approved · Owner', 'Suspended'].map(s => (
+            {['All', 'Reset Pending', 'No Role Assigned', 'Awaiting Approval', 'Approved', 'Approved · Owner', 'Suspended'].map(s => (
               <option key={s} value={s}>{s === 'All' ? 'All Access Statuses' : s}</option>
             ))}
           </select>
@@ -218,7 +218,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
                 <td>{r.person?.name || 'No Staff Record'}<small>{r.linkMethod}</small></td>
                 <td>{r.email}</td>
                 <td>{r.role || '—'}</td>
-                <td>{r.hasLogin ? (r.login?.mustResetPassword ? 'Configured · Reset Pending' : 'Configured') : 'Not Created'}{r.login?.displayName && <small>{r.login.displayName}</small>}</td>
+                <td>{r.hasLogin ? (r.login?.mustResetPassword ? 'Configured · Reset Pending' : 'Configured') : 'Not Created'}{r.login?.displayName && <small>{r.login.displayName}</small>}{r.login?.mustResetPassword&&<small><span className="portalaccessstatus pending">Must reset password on first sign-in</span></small>}</td>
                 <td>
                   <span className={'portalaccessstatus ' + (r.status.startsWith('Approved') ? 'enabled' : r.status === 'Suspended' ? 'suspended' : 'pending')}>
                     {r.status}
