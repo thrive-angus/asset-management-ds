@@ -2,6 +2,7 @@
 import PaginatedTable from './paginated-table';
 // Append a release here whenever a production update is prepared. Retain earlier entries.
 export const APP_RELEASES=[
+ {version:230,date:'2026-10-16',changes:'Rollback test marker 2: second deployment used to verify rollback reliability across consecutive releases.'},
  {version:229,date:'2026-10-16',changes:'Rollback test marker: this release was pushed to validate Dokploy rollback to the previous deployment image.'},
  {version:228,date:'2026-10-15',changes:'Full backup restore now preserves the currently signed-in account as Administrator to prevent accidental access lockout. Access checks in the app now force fresh server reads to avoid stale Pending status after role updates.'},
  {version:227,date:'2026-10-15',changes:'Backup & Recovery now supports two restore modes: Import Missing Records (keeps existing IDs) and Full Restore (replaces existing records and settings from a downloaded complete backup after explicit confirmation phrase).'},
