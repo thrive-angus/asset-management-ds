@@ -42,7 +42,7 @@ Local tool usage metrics are disabled by default. Set `WRANGLER_SEND_METRICS=tru
 - `app/chatgpt-auth.ts` now resolves identity from app-managed sessions
 - `.openai/hosting.json` declares optional Sites D1 and R2 bindings
 - `vite.config.ts` simulates declared bindings for local development
-- `db/index.ts` initializes and reads a local SQLite database file (`DATABASE_PATH`)
+- `db/index.ts` connects to PostgreSQL using `DATABASE_URL`
 - `db/schema.ts` starts intentionally empty
 - `@cloudflare/workers-types` provides Worker types; `cloudflare-env.d.ts` declares optional `DB`/`BUCKET` bindings—update these declarations if binding names change
 - `examples/d1/` contains an optional D1 example surface
@@ -71,14 +71,24 @@ The first app start creates that user if it doesn't already exist.
 
 1. Connect your GitHub repository in Dokploy.
 2. Create an app from the repository and build it with Docker.
-3. Add persistent volume mount for database data:
-   - Container path: `/app/data`
-4. Set environment variables:
-   - `DATABASE_PATH=/app/data/app.db`
+3. Set environment variables:
+   - `DATABASE_URL=<dokploy postgres internal connection url>`
    - `AUTH_BOOTSTRAP_EMAIL=<admin email>`
    - `AUTH_BOOTSTRAP_PASSWORD=<strong password>`
    - `NODE_ENV=production`
-5. Expose container port `3000`.
+4. Expose container port `3000`.
+
+`start:docker` runs `scripts/init-postgres.mjs` before starting the app. This script creates required tables and ensures the bootstrap admin user has Administrator access.
+
+## Migrating Existing SQLite Data to PostgreSQL
+
+If you are migrating from the earlier SQLite deployment, run:
+
+```bash
+DATABASE_URL=<postgres-url> SQLITE_PATH=./data/app.db npm run db:migrate:sqlite-to-postgres
+```
+
+The migration copies rows for: `assets`, `history`, `staff`, `audits`, `audit_checks`, `settings`, `auth_users`, and `auth_sessions`.
 
 ## Workspace Auth Headers
 
