@@ -748,3 +748,141 @@ body:has(.overlay) .headerutilities>.currencycontrol{visibility:hidden}.modalhea
 .fileclear:hover:not(:disabled){background:#fff0f0;border-color:#a32630}
 .fileclear:focus-visible{outline:2px solid #14356d;outline-offset:2px}
 @media(max-width:600px){.selectedfilename{font-size:16px}.clearablefilepicker{gap:6px}.fileclear{min-width:44px;min-height:44px}}
+
+/* Login page prioritizes clarity, trust cues and a focused sign-in action. */
+.signinscreen{
+ min-height:100vh;
+ margin:0!important;
+ width:100%!important;
+ display:grid;
+ place-items:center;
+ padding:32px 18px;
+ background:radial-gradient(circle at 20% 0%,#eaf6ff 0,#f4f8fb 42%,#edf2f8 100%);
+}
+.signinlayout{
+ width:min(980px,100%);
+ display:grid;
+ grid-template-columns:minmax(0,1.1fr) minmax(320px,420px);
+ gap:24px;
+ align-items:stretch;
+}
+.signinwelcome,.signinpanel{
+ background:#fff;
+ border:1px solid #d8e4ef;
+ border-radius:14px;
+ box-shadow:0 14px 40px #102c4518;
+}
+.signinwelcome{
+ padding:30px;
+ color:#183051;
+ display:grid;
+ align-content:start;
+ gap:12px;
+}
+.signineyebrow{
+ display:inline-flex;
+ align-items:center;
+ width:max-content;
+ padding:6px 10px;
+ border-radius:99px;
+ background:#e7f9fa;
+ color:#087b85;
+ letter-spacing:.8px;
+ text-transform:uppercase;
+ font-size:10px;
+ font-weight:700;
+}
+.signinwelcome h1{
+ margin:0;
+ color:#102952;
+ font-size:34px;
+ line-height:1.2;
+ letter-spacing:-.6px;
+}
+.signinwelcome p{
+ margin:0;
+ color:#4f647e;
+ font-size:14px;
+ line-height:1.7;
+}
+.signinwelcome ul{
+ margin:8px 0 0;
+ padding-left:18px;
+ display:grid;
+ gap:8px;
+ color:#294b6d;
+}
+.signinwelcome li{
+ line-height:1.6;
+ font-size:13px;
+}
+.signinpanel{
+ padding:28px 24px;
+ display:grid;
+ gap:12px;
+ align-content:start;
+}
+.signinpanel h2{
+ margin:0;
+ font-size:30px;
+ color:#102952;
+ letter-spacing:-.5px;
+}
+.signinpanel p{
+ margin:0 0 6px;
+ color:#5e7088;
+ font-size:13px;
+}
+.signinpanel label{
+ display:grid;
+ gap:8px;
+ margin:0;
+ font-size:12px;
+ font-weight:700;
+ color:#16345d;
+}
+.signinpanel input{
+ width:100%;
+ min-height:44px;
+ border:1px solid #c7d6e5;
+ border-radius:8px;
+ margin:0;
+ padding:10px 12px;
+ color:#102952;
+ background:#fff;
+ font-size:14px;
+}
+.signinpanel input:focus-visible{
+ outline:2px solid #3d89d4;
+ outline-offset:1px;
+ border-color:#7fb4e6;
+}
+.signinerror{
+ margin:2px 0 0;
+ padding:11px 12px;
+ border:1px solid #f2ccb8;
+ border-radius:8px;
+}
+.signinbutton{
+ width:100%;
+ min-height:44px!important;
+ border-radius:8px!important;
+ margin-top:2px;
+ font-size:14px!important;
+}
+.signinhelp{
+ color:#5f748f;
+ line-height:1.5;
+ font-size:11px;
+ margin-top:4px;
+}
+@media(max-width:900px){
+ .signinlayout{grid-template-columns:1fr}
+ .signinwelcome{padding:24px}
+ .signinwelcome h1{font-size:30px}
+}
+@media(max-width:600px){
+ .signinscreen{padding:18px}
+ .signinwelcome,.signinpanel{padding:20px}
+ .signinwelcome h1{font-size:26px}
+}

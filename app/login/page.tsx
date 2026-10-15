@@ -41,34 +41,51 @@ export default function LoginPage() {
 
   return (
     <main className="signinscreen">
-      <form className="signinpanel" onSubmit={submit}>
-        <h1>Dental Stars Asset Manager</h1>
-        <p>Sign in with your assigned app account.</p>
-        <label>
-          Work Email
-          <input
-            type="email"
-            autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </label>
-        <label>
-          Password
-          <input
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-        </label>
-        {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={busy}>
-          {busy ? 'Signing in…' : 'Sign In'}
-        </button>
-      </form>
+      <div className="signinlayout">
+        <section className="signinwelcome">
+          <small className="signineyebrow">Dental Stars</small>
+          <h1>Asset Management Portal</h1>
+          <p>Track equipment, staff handovers, inventory checks, and service history in one secure workspace.</p>
+          <ul>
+            <li>Centralized asset records and assignment timeline</li>
+            <li>Role-based access controls and approval workflows</li>
+            <li>Staff portal with acknowledgements and accountability</li>
+          </ul>
+        </section>
+        <form className="signinpanel" onSubmit={submit}>
+          <h2>Sign In</h2>
+          <p>Use your assigned app account to continue.</p>
+          <label htmlFor="login-email">
+            Work Email
+            <input
+              id="login-email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              disabled={busy}
+              required
+            />
+          </label>
+          <label htmlFor="login-password">
+            Password
+            <input
+              id="login-password"
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              disabled={busy}
+              required
+            />
+          </label>
+          {error && <p className="error signinerror" role="alert">{error}</p>}
+          <button type="submit" className="primary signinbutton" disabled={busy}>
+            {busy ? 'Signing in…' : 'Sign In'}
+          </button>
+          <small className="signinhelp">Need access or password reset? Contact your Administrator.</small>
+        </form>
+      </div>
     </main>
   );
 }
