@@ -2,6 +2,7 @@ import { validateBackup, protectedBackupSetting, BACKUP_TABLES } from '../../bac
 import { getDb } from '../../../db';
 import { assets, staff, history, audits, auditChecks, settings } from '../../../db/schema';
 import { requireAccess, apiError } from '../../permissions';
+import { eq } from 'drizzle-orm';
 
 const tables = { assets, staff, history, audits, auditChecks, settings };
 type BackupTable = (typeof BACKUP_TABLES)[number];
@@ -254,6 +255,13 @@ export async function POST(req: Request) {
         const table = tables[item.key] as never;
         await tx.insert(table).values(item.row as never).onConflictDoNothing();
       }
+      const accessRow = (await tx.select().from(settings).where(eq(settings.id, 'access')))[0];
+      const access = JSON.parse(accessRow?.data || '{}');
+      access[String(user.email || '').trim().toLowerCase()] = 'Administrator';
+      await tx.insert(settings).values({ id: 'access', data: JSON.stringify(access) }).onConflictDoUpdate({
+        target: settings.id,
+        set: { data: JSON.stringify(access) },
+      });
       const date = new Date().toISOString();
       const event = {
         id: crypto.randomUUID(),
