@@ -60,6 +60,13 @@ This project now supports an app-managed login page at `/login`:
 
 Session records are persisted in `auth_sessions`; users are stored in `auth_users`.
 
+Administrators can manage login users directly in **Settings → User Access**:
+
+- create users with username (email), role, and password
+- update username, display name, and role
+- reset passwords without exposing existing hashes
+- enforce role-based dashboard access (`Administrator`, `Asset Manager`, `Viewer`, `Staff`, `Suspended`)
+
 Bootstrap your first administrator account by setting:
 
 - `AUTH_BOOTSTRAP_EMAIL`

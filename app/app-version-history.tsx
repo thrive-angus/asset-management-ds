@@ -2,6 +2,7 @@
 import PaginatedTable from './paginated-table';
 // Append a release here whenever a production update is prepared. Retain earlier entries.
 export const APP_RELEASES=[
+ {version:231,date:'2026-10-16',changes:'User Access now lets Administrators securely create and update login users in-app, including username (email), role, display name and password reset. Roles continue to gate dashboard and action permissions after login.'},
  {version:230,date:'2026-10-16',changes:'Rollback test marker 2: second deployment used to verify rollback reliability across consecutive releases.'},
  {version:229,date:'2026-10-16',changes:'Rollback test marker: this release was pushed to validate Dokploy rollback to the previous deployment image.'},
  {version:228,date:'2026-10-15',changes:'Full backup restore now preserves the currently signed-in account as Administrator to prevent accidental access lockout. Access checks in the app now force fresh server reads to avoid stale Pending status after role updates.'},
