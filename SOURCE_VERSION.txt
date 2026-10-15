@@ -1,0 +1,10 @@
+Dental Stars Asset Manager
+Latest saved version: 224
+Source commit: 4fa910551ec061f94b6199c1987ad19a48d0b8c7
+Export date: 2026-10-15
+
+This is the source code, not a production data backup. Existing staff, equipment records and uploaded documents must be exported separately using the application backup features.
+
+Hosting dependencies: Cloudflare Workers / Vinext, D1 database and R2 storage bindings, and current ChatGPT/Sites sign-in integration. Moving to a conventional VPS requires adapting these services and authentication; copying files alone is insufficient. See README.md, package.json, database schema/migrations and hosting configuration.
+
+The discussion about removing duplicate file-selection details has not been implemented; this export matches the latest saved application version.

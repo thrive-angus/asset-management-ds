@@ -1,0 +1,11 @@
+export const BACKUP_TABLES=['assets','staff','history','audits','auditChecks','settings'];
+export function protectedBackupSetting(id:string){return id==='access'||['personal-account:','login-staff:','role-request:'].some(prefix=>id.startsWith(prefix))}
+export function validateBackup(b:any){
+ if(b?.format!=='dental-stars-backup'||b.version!==1||!b.records||!Array.isArray(b.files))throw Error('Choose a valid Dental Stars backup.');
+ let count=0;const required=new Set<string>();
+ function attachments(record:any){for(const item of [...(record?.evidence||[]),...(record?.attachments||[])])if(item?.key)required.add(item.key)}
+ for(const key of BACKUP_TABLES){if(!Array.isArray(b.records[key]))throw Error('Backup is missing '+key);const ids=new Set<string>();for(const r of b.records[key]){if(typeof r.id!=='string'||!r.id||typeof r.data!=='string'||ids.has(r.id))throw Error('Invalid or duplicate '+key+' records');ids.add(r.id);const data=JSON.parse(r.data);if(['history','audits'].includes(key)&&typeof r.date!=='string'||key==='history'&&typeof r.assetId!=='string'||key==='auditChecks'&&typeof r.auditId!=='string')throw Error('Invalid record metadata');if(key==='assets')attachments(data);if(key==='settings'&&r.id==='receipt-register'){if(!Array.isArray(data))throw Error('Invalid receipt register');data.forEach(attachments)}if(key==='history'){attachments(data.before);attachments(data.after);if(data.action==='Evidence attached'&&data.details?.key)required.add(data.details.key)}}count+=b.records[key].length}
+ if(count>5000)throw Error('This backup exceeds 5,000 records. Use a hosting-level database import.');
+ const files=new Set<string>();let total=0;for(const f of b.files){if(typeof f.key!=='string'||!/^evidence\/[a-f0-9-]+$/.test(f.key)||files.has(f.key)||typeof f.base64!=='string'||!['image/jpeg','image/png','image/webp','application/pdf'].includes(f.type)||f.base64.length%4!==0||!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(f.base64))throw Error('Invalid or duplicate evidence file');files.add(f.key);total+=f.base64.length*3/4-(f.base64.endsWith('==')?2:f.base64.endsWith('=')?1:0)}
+ if(total>20*1024*1024)throw Error('Evidence exceeds the 20 MB backup limit');for(const key of required)if(!files.has(key))throw Error('Backup incomplete: missing document '+key);return b;
+}

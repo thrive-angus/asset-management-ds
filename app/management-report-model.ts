@@ -1,0 +1,16 @@
+import {recordedPurchaseCost} from './acquisition-model';
+import {buildReports,EMPTY_REPORT_FILTERS,recordGaps} from './report-model';
+import {todayPH,usable,auditMissing} from './asset-model';
+
+export function managementReport(assets:any[],staff:any[],events:any[],audits:any[],tickets:any[]){
+ const current=assets.filter(a=>!a.archived),today=todayPH(),end=new Date(today+'T00:00:00Z');end.setUTCDate(end.getUTCDate()+60);const until=end.toISOString().slice(0,10);
+ const reports=buildReports(current,staff,events,audits,EMPTY_REPORT_FILTERS,tickets),decisions:any[]=[];
+ const owner=(a:any)=>a.repairOwner||a.assignee||'Not recorded';
+ for(const a of current){if(a.status==='Under repair')decisions.push({id:'repair-'+a.id,issue:a.repairDueDate&&a.repairDueDate<today?'Overdue repair':'Repair follow-up',record:a.id,owner:owner(a),due:a.repairDueDate||'Not recorded',_asset:a});else if(a.status==='Lost'||!['Retired'].includes(a.status)&&['Damaged','Not working'].includes(a.condition))decisions.push({id:'health-'+a.id,issue:a.status==='Lost'?'Lost equipment':'Damaged equipment',record:a.id,owner:owner(a),due:'Not recorded',_asset:a});if(a.status!=='Retired'&&a.replacementDate&&a.replacementDate<=until)decisions.push({id:'replacement-'+a.id,issue:a.replacementDate<today?'Overdue replacement':'Replacement within 60 days',record:a.id,owner:a.assignee||'Not recorded',due:a.replacementDate,_asset:a});}
+ for(const r of reports['Outstanding Returns'])decisions.push({id:'return-'+r.assetId,issue:'Outstanding return',record:r.assetId,owner:r.staffName,due:r.finalDate,_asset:r._asset,_staff:r._staff});
+ const completed=audits.filter(a=>a.status==='Completed').sort((a,b)=>String(b.completed||b.date).localeCompare(String(a.completed||a.date))),latest=completed[0],unresolved=latest?auditMissing(latest).filter((e:any)=>!latest.resolutions?.[e.id]).map((e:any)=>current.find(a=>a.id===e.id)).filter((a:any)=>a&&a.status!=='Retired'&&(!a.lastVerified||a.lastVerified<latest.completed)):[];
+ for(const a of unresolved)decisions.push({id:'check-'+a.id,issue:'Unresolved inventory discrepancy',record:a.id,owner:a.assignee||'Not recorded',due:'Not recorded',_audit:latest,_asset:a});
+ const open=tickets.filter(t=>t.status==='Open');for(const t of open)decisions.push({id:'ticket-'+t.id,issue:'Open ticket: '+t.type,record:t.assetId||t.id,owner:t.name||'Not recorded',due:'Not recorded',_ticket:t});
+ const costs=current.filter(a=>a.purchaseCost!==undefined&&a.purchaseCost!==null&&String(a.purchaseCost).trim()!==''&&Number.isFinite(Number(a.purchaseCost))&&Number(a.purchaseCost)>=0);
+ return {current,available:current.filter(usable),assigned:reports['Staff Assignments'],attention:new Set([...reports.Repairs,...reports['Damaged Equipment'],...reports['Lost Equipment']].map(r=>r.assetId)).size,returns:reports['Outstanding Returns'],unresolved,latest,open,overdueTickets:open.filter(t=>t.dueDate&&t.dueDate<today),incomplete:current.filter(a=>recordGaps(a,staff).length),costCount:costs.length,costTotal:costs.reduce((n,a)=>n+(recordedPurchaseCost(a)||0),0),decisions:decisions.sort((a,b)=>String(a.due.match(/^\d{4}-/)?a.due:'9999').localeCompare(String(b.due.match(/^\d{4}-/)?b.due:'9999')))};
+}
