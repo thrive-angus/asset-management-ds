@@ -1,5 +1,4 @@
 import { validateBackup, protectedBackupSetting, BACKUP_TABLES } from '../../backup-model';
-import { env } from 'cloudflare:workers';
 import { getDb } from '../../../db';
 import { assets, staff, history, audits, auditChecks, settings } from '../../../db/schema';
 import { requireAccess, apiError } from '../../permissions';
@@ -33,14 +32,24 @@ function restoreMode(value: unknown): RestoreMode {
   return value === 'full' ? 'full' : 'missing';
 }
 
+async function getBucket() {
+  try {
+    const workers = await import('cloudflare:workers');
+    return workers.env?.BUCKET;
+  } catch {
+    return undefined;
+  }
+}
+
 export async function GET(req?: Request) {
   try {
     const user = await requireAccess('admin');
     const query = req ? new URL(req.url).searchParams : null;
+    const bucket = await getBucket();
 
     if (query?.get('mode') === 'list') {
-      if (!env.BUCKET) throw Error('Backup storage unavailable.');
-      const result = await env.BUCKET.list({ prefix: 'backups/', limit: 1000 });
+      if (!bucket) throw Error('Backup storage unavailable.');
+      const result = await bucket.list({ prefix: 'backups/', limit: 1000 });
       return Response.json({
         items: result.objects
           .map(o => ({ key: o.key, size: o.size, date: o.uploaded.toISOString() }))
@@ -54,7 +63,7 @@ export async function GET(req?: Request) {
       if (!/^backups\/[0-9TZ._a-f-]+\.json$/.test(key)) {
         return Response.json({ error: 'Invalid backup reference.' }, { status: 400 });
       }
-      const object = await env.BUCKET?.get(key);
+      const object = await bucket?.get(key);
       if (!object) return Response.json({ error: 'Saved backup unavailable.' }, { status: 404 });
       return new Response(object.body, {
         headers: {
@@ -103,7 +112,7 @@ export async function GET(req?: Request) {
     const files: BackupFile[] = [];
     let total = 0;
     for (const key of keys) {
-      const object = await env.BUCKET?.get(key);
+      const object = await bucket?.get(key);
       if (!object) {
         throw Error('Backup incomplete: an evidence file is unavailable. Contact the administrator.');
       }
@@ -127,8 +136,8 @@ export async function GET(req?: Request) {
       files,
     };
     const serialized = JSON.stringify(backup);
-    if (!env.BUCKET) throw Error('Backup storage unavailable.');
-    await env.BUCKET.put(
+    if (!bucket) throw Error('Backup storage unavailable.');
+    await bucket.put(
       'backups/' + backup.createdAt.replaceAll(':', '-') + '_' + crypto.randomUUID() + '.json',
       serialized,
       { httpMetadata: { contentType: 'application/json' } },
@@ -148,6 +157,7 @@ export async function GET(req?: Request) {
 export async function POST(req: Request) {
   try {
     const user = await requireAccess('admin');
+    const bucket = await getBucket();
     if (Number(req.headers.get('content-length') || 0) > 32 * 1024 * 1024) {
       return Response.json({ error: 'Backup must be under 32 MB.' }, { status: 413 });
     }
@@ -205,13 +215,13 @@ export async function POST(req: Request) {
     }
 
     for (const f of b.files) {
-      if (!env.BUCKET) throw Error('Evidence storage unavailable.');
+      if (!bucket) throw Error('Evidence storage unavailable.');
       if (mode === 'full') {
-        await env.BUCKET.put(f.key, decode(f.base64), {
+        await bucket.put(f.key, decode(f.base64), {
           httpMetadata: { contentType: f.type },
         });
-      } else if (!(await env.BUCKET.head(f.key))) {
-        await env.BUCKET.put(f.key, decode(f.base64), {
+      } else if (!(await bucket.head(f.key))) {
+        await bucket.put(f.key, decode(f.base64), {
           httpMetadata: { contentType: f.type },
         });
       }
