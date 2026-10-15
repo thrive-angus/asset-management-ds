@@ -283,8 +283,9 @@ export async function POST(req: Request) {
   try {
     const user = await requireAccess('admin');
     const input = (await req.json()) as AccessPayload;
-    if (input.kind === 'user-account') return upsertAccount(user, input);
-    if (input.kind === 'access') return updateRoleOnly(user, input);
+    // Await mutations here so asynchronous validation/transaction failures reach the catch.
+    if (input.kind === 'user-account') return await upsertAccount(user, input);
+    if (input.kind === 'access') return await updateRoleOnly(user, input);
     return Response.json({ error: 'Unsupported access action.' }, { status: 400 });
   } catch (e) {
     return apiError(e);
