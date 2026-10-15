@@ -1,0 +1,10 @@
+Dental Stars Asset Manager
+Version: 226
+Commit: f6b2afab24acf4ed5771498f20c227e0baa960ed
+Exported: 2026-10-15
+
+Includes centralized record exports in Settings > Data Export. CSV exports on working pages were removed. Administrator, Asset Manager and Viewer export permissions are enforced server-side. Complete backup remains Administrator-only.
+
+This archive contains source code only. Existing equipment, staff, history and uploaded documents must be backed up separately.
+
+Hosting dependencies: Vinext on Cloudflare Workers, D1 database, R2 storage, and ChatGPT/Sites authentication. A conventional VPS requires adapting storage/database bindings and authentication; copying these files alone is insufficient. Refer to README.md, package.json, lockfile, database schema/migrations and hosting configuration.

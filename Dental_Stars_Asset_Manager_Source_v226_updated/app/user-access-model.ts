@@ -1,0 +1,7 @@
+export function userAccessRows(staff:any[],roles:Record<string,string>,links:Record<string,string>,ownerEmail:string,requests:any[]=[]){
+ const normalize=(value:any)=>String(value||'').trim().toLowerCase(),owner=normalize(ownerEmail),emails=new Set([owner,...Object.keys(roles).map(normalize)]),linked=new Set<string>();
+ const personFor=(email:string)=>staff.find(s=>s.id===links[email])||staff.find(s=>normalize(s.email)===email);
+ const rows=[...emails].filter(Boolean).map(email=>{const person=personFor(email);if(person)linked.add(person.id);return {email,person,role:email===owner?'Administrator':roles[email]||null,owner:email===owner}});
+ for(const person of staff)if(!person.archived&&!linked.has(person.id)&&!emails.has(normalize(person.email)))rows.push({email:normalize(person.email),person,role:null,owner:false});
+ return rows.map(row=>{const pending=requests.find(r=>r.status==='Pending'&&(r.staffId===row.person?.id||normalize(r.email)===row.email));const inactive=row.person&&(row.person.archived||row.person.employmentStatus==='Inactive'||row.person.stage==='Offboarded');return {...row,linkMethod:links[row.email]?'Verified Link':row.person?'Email Match':'Not Linked',status:row.owner?'Approved · Owner':inactive||row.role==='Suspended'?'Suspended':pending?'Awaiting Approval':row.role?'Approved':'No Role Assigned',pending}}).sort((a,b)=>Number(b.owner)-Number(a.owner)||(a.person?.name||a.email).localeCompare(b.person?.name||b.email));
+}
