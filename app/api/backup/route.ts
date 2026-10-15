@@ -200,7 +200,12 @@ export async function POST(req: Request) {
     }
 
     if (input.action === 'preview') {
-      return Response.json({ summary, files: b.files.length, mode });
+      return Response.json({
+        summary,
+        files: b.files.length,
+        mode,
+        storageAvailable: !!bucket,
+      });
     }
 
     if (input.action !== 'restore' || input.confirm !== true) {
@@ -214,16 +219,25 @@ export async function POST(req: Request) {
       );
     }
 
+    let evidenceImported = 0;
+    let evidenceSkipped = 0;
     for (const f of b.files) {
-      if (!bucket) throw Error('Evidence storage unavailable.');
+      if (!bucket) {
+        evidenceSkipped++;
+        continue;
+      }
       if (mode === 'full') {
         await bucket.put(f.key, decode(f.base64), {
           httpMetadata: { contentType: f.type },
         });
+        evidenceImported++;
       } else if (!(await bucket.head(f.key))) {
         await bucket.put(f.key, decode(f.base64), {
           httpMetadata: { contentType: f.type },
         });
+        evidenceImported++;
+      } else {
+        evidenceSkipped++;
       }
     }
 
@@ -247,7 +261,10 @@ export async function POST(req: Request) {
         date,
         action: mode === 'full' ? 'Complete backup restored' : 'Backup imported',
         recordedBy: { id: user.userId, name: user.displayName, email: user.email },
-        details: summary,
+        details: {
+          summary,
+          evidence: { imported: evidenceImported, skipped: evidenceSkipped },
+        },
       };
       await tx.insert(history).values({
         id: event.id,
@@ -257,7 +274,15 @@ export async function POST(req: Request) {
       });
     });
 
-    return Response.json({ ok: true, summary, mode });
+    return Response.json({
+      ok: true,
+      summary,
+      mode,
+      evidence: { imported: evidenceImported, skipped: evidenceSkipped },
+      warning: !bucket && b.files.length
+        ? 'Evidence storage is unavailable. Records were imported, but evidence files were skipped.'
+        : undefined,
+    });
   } catch (e) {
     return apiError(e);
   }
