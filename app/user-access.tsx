@@ -12,7 +12,7 @@ type AccessData = {
   ownerEmail?: string;
   access?: Record<string, string>;
   personalLinks?: Record<string, string>;
-  authLogins?: Array<{ id: string; email: string; displayName: string; createdAt: string }>;
+  authLogins?: Array<{ id: string; email: string; displayName: string; mustResetPassword?: boolean; createdAt: string }>;
 };
 
 type StaffMember = { id: string; name: string; email?: string; archived?: boolean; employmentStatus?: string; stage?: string };
@@ -22,7 +22,7 @@ type AccessRow = {
   role?: string | null;
   owner?: boolean;
   hasLogin?: boolean;
-  login?: { displayName?: string };
+  login?: { displayName?: string; mustResetPassword?: boolean };
   status: string;
   pending?: { role?: string };
   linkMethod: string;
@@ -218,7 +218,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
                 <td>{r.person?.name || 'No Staff Record'}<small>{r.linkMethod}</small></td>
                 <td>{r.email}</td>
                 <td>{r.role || '—'}</td>
-                <td>{r.hasLogin ? 'Configured' : 'Not Created'}{r.login?.displayName && <small>{r.login.displayName}</small>}</td>
+                <td>{r.hasLogin ? (r.login?.mustResetPassword ? 'Configured · Reset Pending' : 'Configured') : 'Not Created'}{r.login?.displayName && <small>{r.login.displayName}</small>}</td>
                 <td>
                   <span className={'portalaccessstatus ' + (r.status.startsWith('Approved') ? 'enabled' : r.status === 'Suspended' ? 'suspended' : 'pending')}>
                     {r.status}
@@ -294,7 +294,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
                       onChange={e => setEdit({ ...edit, password: e.target.value })}
                       required={!edit.hasLogin}
                     />
-                    <small>{edit.hasLogin ? 'Leave blank to keep the current password.' : 'Use 12+ chars and mix uppercase/lowercase/numbers/symbols.'}</small>
+                    <small>{edit.hasLogin ? 'Leave blank to keep the current password. If changed, the user must reset it on next sign-in.' : 'Use 12+ chars and mix uppercase/lowercase/numbers/symbols. The user will reset this on first sign-in.'}</small>
                   </label>
                   <label>
                     Confirm Password

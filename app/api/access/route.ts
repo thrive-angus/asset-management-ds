@@ -3,7 +3,7 @@ import { getDb } from '../../../db';
 import { settings, staff, history, authUsers } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
 import { requireAccess, identity, ROLES, apiError, AccessError, OWNER_EMAIL } from '../../permissions';
-import { hashPassword } from '../../password-auth';
+import { hashPassword, passwordStrengthError } from '../../password-auth';
 
 const ROLE_OPTIONS = [...ROLES, 'Suspended'];
 type AccessActor = { userId: string; displayName: string; email: string };
@@ -15,18 +15,6 @@ function normalizeEmail(value: unknown) {
 
 function validEmail(value: string) {
   return /^\S+@\S+\.\S+$/.test(value);
-}
-
-function passwordError(password: string) {
-  if (!password) return null;
-  if (password.length < 12) return 'Password must be at least 12 characters.';
-  let groups = 0;
-  if (/[a-z]/.test(password)) groups++;
-  if (/[A-Z]/.test(password)) groups++;
-  if (/\d/.test(password)) groups++;
-  if (/[^a-zA-Z0-9]/.test(password)) groups++;
-  if (groups < 3) return 'Password must include at least three: uppercase, lowercase, number, and symbol.';
-  return null;
 }
 
 async function requireActiveStaffLink(personalStaffId: unknown) {
@@ -54,6 +42,7 @@ export async function GET() {
           id: row.id,
           email: row.email,
           displayName: row.displayName,
+          mustResetPassword: row.mustResetPassword,
           createdAt: row.createdAt,
         }))
       : undefined;
@@ -169,7 +158,7 @@ async function upsertAccount(user: AccessActor, input: AccessPayload) {
   if (!displayName || displayName.length > 120) {
     return Response.json({ error: 'Enter a display name up to 120 characters.' }, { status: 400 });
   }
-  const passValidation = passwordError(password);
+  const passValidation = password ? passwordStrengthError(password) : null;
   if (passValidation) return Response.json({ error: passValidation }, { status: 400 });
   if (currentEmail === OWNER_EMAIL && nextEmail !== OWNER_EMAIL) {
     throw new AccessError('The owner login email cannot be changed here.', 400);
@@ -199,12 +188,18 @@ async function upsertAccount(user: AccessActor, input: AccessPayload) {
     }
 
     if (currentAccount) {
-      const updates: Record<string, string> = { email: nextEmail, displayName };
-      if (password) updates.passwordHash = hashPassword(password);
+      const updates: { email: string; displayName: string; passwordHash?: string; mustResetPassword?: boolean } = { email: nextEmail, displayName };
+      if (password) {
+        updates.passwordHash = hashPassword(password);
+        updates.mustResetPassword = true;
+      }
       await tx.update(authUsers).set(updates).where(eq(authUsers.id, currentAccount.id));
     } else if (targetAccount) {
-      const updates: Record<string, string> = { displayName };
-      if (password) updates.passwordHash = hashPassword(password);
+      const updates: { displayName: string; passwordHash?: string; mustResetPassword?: boolean } = { displayName };
+      if (password) {
+        updates.passwordHash = hashPassword(password);
+        updates.mustResetPassword = true;
+      }
       await tx.update(authUsers).set(updates).where(eq(authUsers.id, targetAccount.id));
     } else {
       await tx.insert(authUsers).values({
@@ -212,6 +207,7 @@ async function upsertAccount(user: AccessActor, input: AccessPayload) {
         email: nextEmail,
         displayName,
         passwordHash: hashPassword(password),
+        mustResetPassword: true,
         createdAt: date,
       });
     }
@@ -275,7 +271,7 @@ async function upsertAccount(user: AccessActor, input: AccessPayload) {
         date,
         action,
         recordedBy: { id: user.userId, name: user.displayName, email: user.email },
-        details: { email: nextEmail, role, passwordUpdated: !!password, linkedStaffId: person?.id || null },
+        details: { email: nextEmail, role, passwordUpdated: !!password, forceResetOnNextSignIn: !currentAccount && !targetAccount || !!password, linkedStaffId: person?.id || null },
       }),
     });
   });

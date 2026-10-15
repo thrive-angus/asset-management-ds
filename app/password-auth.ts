@@ -18,3 +18,16 @@ export function verifyPassword(password: string, stored: string): boolean {
   if (actual.length !== expected.length) return false;
   return timingSafeEqual(actual, expected);
 }
+
+export function passwordStrengthError(password: string): string | null {
+  if (password.length < 12) return "Password must be at least 12 characters.";
+  let groups = 0;
+  if (/[a-z]/.test(password)) groups++;
+  if (/[A-Z]/.test(password)) groups++;
+  if (/\d/.test(password)) groups++;
+  if (/[^a-zA-Z0-9]/.test(password)) groups++;
+  if (groups < 3) {
+    return "Password must include at least three: uppercase, lowercase, number, and symbol.";
+  }
+  return null;
+}

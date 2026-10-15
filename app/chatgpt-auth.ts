@@ -6,11 +6,13 @@ export type ChatGPTUser = {
   displayName: string;
   email: string;
   fullName: string | null;
+  mustResetPassword: boolean;
 };
 
 const SIGN_IN_PATH = "/login";
 const SIGN_OUT_PATH = "/logout";
 const CALLBACK_PATH = "/callback";
+const RESET_PASSWORD_PATH = "/reset-password";
 
 export async function getChatGPTUser(): Promise<ChatGPTUser | null> {
   const user = await sessionIdentity();
@@ -22,7 +24,16 @@ export async function requireChatGPTUser(
   returnTo: string,
 ): Promise<ChatGPTUser> {
   const user = await getChatGPTUser();
-  if (user) return user;
+  if (user) {
+    if (user.mustResetPassword && returnTo !== RESET_PASSWORD_PATH) {
+      redirect(
+        `${RESET_PASSWORD_PATH}?return_to=${encodeURIComponent(
+          safeRelativeReturnPath(returnTo),
+        )}`,
+      );
+    }
+    return user;
+  }
 
   redirect(chatGPTSignInPath(returnTo));
 }
@@ -58,6 +69,7 @@ function isReservedAuthPath(pathname: string): boolean {
     pathname === SIGN_OUT_PATH ||
     pathname === "/signin-with-chatgpt" ||
     pathname === "/signout-with-chatgpt" ||
-    pathname === CALLBACK_PATH
+    pathname === CALLBACK_PATH ||
+    pathname === RESET_PASSWORD_PATH
   );
 }

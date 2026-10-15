@@ -12,7 +12,22 @@ export type AuthIdentity = {
   displayName: string;
   email: string;
   fullName: string | null;
+  mustResetPassword: boolean;
 };
+
+type SessionAccount = {
+  token: string;
+  user: {
+    id: string;
+    email: string;
+    displayName: string;
+    mustResetPassword: boolean;
+  };
+};
+
+function parseMustReset(value: unknown): boolean {
+  return value === true || value === "true" || value === 1;
+}
 
 export async function authenticateByPassword(email: string, password: string) {
   const normalized = email.trim().toLowerCase();
@@ -26,6 +41,7 @@ export async function authenticateByPassword(email: string, password: string) {
     id: user.id,
     email: user.email,
     displayName: user.displayName,
+    mustResetPassword: parseMustReset((user as Record<string, unknown>).mustResetPassword),
   };
 }
 
@@ -45,7 +61,11 @@ export async function destroySession(token: string) {
   await getDb().delete(authSessions).where(eq(authSessions.id, token));
 }
 
-export async function sessionIdentity(): Promise<AuthIdentity | null> {
+export async function destroyUserSessions(userId: string) {
+  await getDb().delete(authSessions).where(eq(authSessions.userId, userId));
+}
+
+export async function sessionAccount(): Promise<SessionAccount | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
 
@@ -67,9 +87,26 @@ export async function sessionIdentity(): Promise<AuthIdentity | null> {
   }
 
   return {
+    token,
+    user: {
+      id: user.id,
+      email: user.email,
+      displayName: user.displayName,
+      mustResetPassword: parseMustReset((user as Record<string, unknown>).mustResetPassword),
+    },
+  };
+}
+
+export async function sessionIdentity(): Promise<AuthIdentity | null> {
+  const account = await sessionAccount();
+  if (!account) return null;
+  const user = account.user;
+
+  return {
     userId: user.id,
     email: user.email,
     displayName: user.displayName || user.email,
     fullName: user.displayName || null,
+    mustResetPassword: user.mustResetPassword,
   };
 }

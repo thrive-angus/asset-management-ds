@@ -1,4 +1,4 @@
-import { pgTable, text } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, text } from 'drizzle-orm/pg-core';
 export const assets = pgTable('assets', {id:text('id').primaryKey(), data:text('data').notNull()});
 export const history = pgTable('history', {id:text('id').primaryKey(), assetId:text('asset_id').notNull(), data:text('data').notNull(), date:text('date').notNull()});
 export const staff = pgTable('staff', {id:text('id').primaryKey(), data:text('data').notNull()});
@@ -11,6 +11,7 @@ export const authUsers = pgTable('auth_users', {
  email:text('email').notNull().unique(),
  passwordHash:text('password_hash').notNull(),
  displayName:text('display_name').notNull(),
+ mustResetPassword:boolean('must_reset_password').notNull().default(false),
  createdAt:text('created_at').notNull(),
 });
 export const authSessions = pgTable('auth_sessions', {

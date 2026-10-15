@@ -23,7 +23,10 @@ export async function POST(req: Request) {
     }
 
     const token = await createSession(user.id);
-    const res = NextResponse.json({ ok: true, next: returnTo });
+    const next = user.mustResetPassword
+      ? `/reset-password?return_to=${encodeURIComponent(returnTo)}`
+      : returnTo;
+    const res = NextResponse.json({ ok: true, next, resetRequired: user.mustResetPassword });
     res.cookies.set({
       name: SESSION_COOKIE,
       value: token,

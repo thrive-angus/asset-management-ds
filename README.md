@@ -65,6 +65,7 @@ Administrators can manage login users directly in **Settings → User Access**:
 - create users with username (email), role, and password
 - update username, display name, and role
 - reset passwords without exposing existing hashes
+- force first-login password reset automatically for newly created users and admin-set password changes
 - enforce role-based dashboard access (`Administrator`, `Asset Manager`, `Viewer`, `Staff`, `Suspended`)
 
 Bootstrap your first administrator account by setting:
