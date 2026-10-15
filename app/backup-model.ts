@@ -1,4 +1,4 @@
-export const BACKUP_TABLES=['assets','staff','history','audits','auditChecks','settings'];
+export const BACKUP_TABLES=['assets','staff','history','audits','auditChecks','settings'] as const;
 export function protectedBackupSetting(id:string){return id==='access'||['personal-account:','login-staff:','role-request:'].some(prefix=>id.startsWith(prefix))}
 export function validateBackup(b:any){
  if(b?.format!=='dental-stars-backup'||b.version!==1||!b.records||!Array.isArray(b.files))throw Error('Choose a valid Dental Stars backup.');
