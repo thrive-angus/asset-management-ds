@@ -1,0 +1,46 @@
+.field {
+  min-width: 0;
+}
+
+.control {
+  position: relative;
+  margin-top: 8px;
+}
+
+.control input {
+  width: 100%;
+  min-height: 44px;
+  margin: 0;
+  padding: 12px 48px 12px 12px;
+  border: 1px solid #dce4ef;
+  border-radius: 6px;
+  background: white;
+  color: var(--navy);
+}
+
+.toggle {
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #34436b;
+}
+
+.toggle:hover {
+  background: #e7f9fa;
+}
+
+.hint {
+  color: #657299;
+  font-size: 12px;
+  line-height: 1.6;
+}

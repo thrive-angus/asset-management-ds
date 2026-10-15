@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { X, Plus } from 'lucide-react';
+import { X, Plus, Eye, EyeOff } from 'lucide-react';
 import HelpTip from './help-tip';
 import PaginatedTable from './paginated-table';
 import { readApiResponse } from './api-response';
 import { userAccessRows } from './user-access-model';
+import styles from './user-access.module.css';
 
 type AccessData = {
   user: { email: string };
@@ -59,6 +60,8 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -93,6 +96,8 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
 
   function open(row: AccessRow | null = null) {
     setError('');
+    setShowPassword(false);
+    setShowConfirmPassword(false);
     const initial = {
       currentEmail: row?.email || '',
       email: row?.email || '',
@@ -285,27 +290,39 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
                         .map(s => <option key={s.id} value={s.id}>{s.name} · {s.email}</option>)}
                     </select>
                   </label>
-                  <label>
-                    {edit.hasLogin ? 'New Password (Optional)' : 'Password'}
+                  <div className={styles.field}>
+                    <label htmlFor="user-access-password">{edit.hasLogin ? 'New Password (Optional)' : 'Password'}</label>
+                    <div className={styles.control}>
                     <input
-                      type="password"
+                      id="user-access-password"
+                      type={showPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       value={edit.password}
                       onChange={e => setEdit({ ...edit, password: e.target.value })}
                       required={!edit.hasLogin}
                     />
-                    <small>{edit.hasLogin ? 'Leave blank to keep the current password. If changed, the user must reset it on next sign-in.' : 'Use 12+ chars and mix uppercase/lowercase/numbers/symbols. The user will reset this on first sign-in.'}</small>
-                  </label>
-                  <label>
-                    Confirm Password
+                    <button type="button" className={styles.toggle} aria-label={showPassword ? 'Hide password' : 'Show password'} aria-controls="user-access-password" aria-pressed={showPassword} onClick={() => setShowPassword(value => !value)}>
+                      {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+                    </button>
+                    </div>
+                    <small className={styles.hint}>{edit.hasLogin ? 'Leave blank to keep the current password. If changed, the user must reset it on next sign-in.' : 'Use 12+ chars and mix uppercase/lowercase/numbers/symbols. The user will reset this on first sign-in.'}</small>
+                  </div>
+                  <div className={styles.field}>
+                    <label htmlFor="user-access-confirm-password">Confirm Password</label>
+                    <div className={styles.control}>
                     <input
-                      type="password"
+                      id="user-access-confirm-password"
+                      type={showConfirmPassword ? 'text' : 'password'}
                       autoComplete="new-password"
                       value={edit.confirmPassword}
                       onChange={e => setEdit({ ...edit, confirmPassword: e.target.value })}
                       required={!!edit.password}
                     />
-                  </label>
+                    <button type="button" className={styles.toggle} aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'} aria-controls="user-access-confirm-password" aria-pressed={showConfirmPassword} onClick={() => setShowConfirmPassword(value => !value)}>
+                      {showConfirmPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
+                    </button>
+                    </div>
+                  </div>
                 </div>
                 {edit.role === 'Suspended' && (
                   <p className="hint">Suspended access blocks app records and actions. It does not delete staff or equipment history.</p>
