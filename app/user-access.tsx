@@ -5,7 +5,7 @@ import { X, Plus, Eye, EyeOff } from 'lucide-react';
 import HelpTip from './help-tip';
 import PaginatedTable from './paginated-table';
 import { readApiResponse } from './api-response';
-import { userAccessRows } from './user-access-model';
+import { userAccessRows, userAccountExpectedRole } from './user-access-model';
 import styles from './user-access.module.css';
 
 type AccessData = {
@@ -160,7 +160,9 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
           role: edit.role,
           password: edit.password || undefined,
           personalStaffId,
-          expectedRole: edit.expectedRole,
+          expectedRole: edit.existing
+            ? edit.expectedRole
+            : userAccountExpectedRole(email, access.access || {}, access.ownerEmail || ''),
         }),
       }));
       await refresh();

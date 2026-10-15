@@ -2,6 +2,13 @@ type StaffMember = { id: string; name?: string; email?: string; archived?: boole
 type AccessRequest = { status?: string; staffId?: string; email?: string; role?: string };
 type LoginUser = { email: string; displayName?: string };
 
+// A blank Create User form has no email when opened. Resolve its role from
+// the loaded access snapshot once an email is entered, rather than assuming null.
+export function userAccountExpectedRole(email: string, roles: Record<string, string>, ownerEmail: string) {
+ const normalized = email.trim().toLowerCase();
+ return normalized === ownerEmail.trim().toLowerCase() ? 'Administrator' : roles[normalized] || null;
+}
+
 export function userAccessRows(staff:StaffMember[],roles:Record<string,string>,links:Record<string,string>,ownerEmail:string,requests:AccessRequest[]=[],logins:LoginUser[]=[]){
  const normalize=(value:unknown)=>String(value||'').trim().toLowerCase(),owner=normalize(ownerEmail),emails=new Set([owner,...Object.keys(roles).map(normalize),...logins.map(login=>normalize(login.email))]),linked=new Set<string>(),loginByEmail=Object.fromEntries(logins.map(login=>[normalize(login.email),login]));
  const personFor=(email:string)=>staff.find(s=>s.id===links[email])||staff.find(s=>normalize(s.email)===email);

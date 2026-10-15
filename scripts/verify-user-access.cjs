@@ -68,6 +68,7 @@ function load(relative, mocks = {}) {
   return exports;
 }
 const passwords = load('app/password-auth.ts');
+const { userAccountExpectedRole } = load('app/user-access-model.ts');
 const permissions = load('app/permissions.ts', {
   './access-policy-model': {}, './chatgpt-auth': {}, '../db': {},
   'next/headers': {}, '../db/schema': schema,
@@ -87,6 +88,31 @@ async function send(change = {}) {
   return { status: response.status, body: await response.json() };
 }
 async function main() {
+  for (const role of ['Staff', 'Viewer', 'Asset Manager', 'Administrator', 'Suspended']) {
+    setup();
+    const loadedAccess = { [input.email]: role };
+    rows.settings.push({ id: 'access', data: JSON.stringify(loadedAccess) });
+    const expectedRole = userAccountExpectedRole(' NEW@EXAMPLE.COM ', loadedAccess, permissions.OWNER_EMAIL);
+    assert.equal(expectedRole, role);
+    assert.equal((await send({ role, expectedRole })).status, 200);
+    assert.equal(rows.authUsers.length, 1);
+    assert(passwords.verifyPassword(input.password, rows.authUsers[0].passwordHash));
+    assert.equal(JSON.parse(rows.settings.find(row => row.id === 'access').data)[input.email], role);
+  }
+  assert.equal(userAccountExpectedRole('unknown@example.com', {}, permissions.OWNER_EMAIL), null);
+  assert.equal(userAccountExpectedRole(permissions.OWNER_EMAIL, {}, permissions.OWNER_EMAIL), 'Administrator');
+  console.log('PASS Create User resolves the entered email against loaded roles and creates logins for existing role assignments');
+
+  setup();
+  const loadedAccess = { [input.email]: 'Staff' };
+  rows.settings.push({ id: 'access', data: JSON.stringify({ [input.email]: 'Suspended' }) });
+  const changed = await send({ expectedRole: userAccountExpectedRole(input.email, loadedAccess, permissions.OWNER_EMAIL) });
+  assert.equal(changed.status, 409);
+  assert.equal(rows.authUsers.length, 0);
+  assert.equal(JSON.parse(rows.settings[0].data)[input.email], 'Suspended');
+  assert.equal(rows.history.length, 0);
+  console.log('PASS a role changed after loading still blocks creation without overwriting access');
+
   setup();
   assert.equal((await send()).status, 200);
   assert.equal(rows.authUsers.length, 1);
