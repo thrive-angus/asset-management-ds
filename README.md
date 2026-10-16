@@ -60,13 +60,26 @@ This project now supports an app-managed login page at `/login`:
 
 Session records are persisted in `auth_sessions`; users are stored in `auth_users`.
 
-Administrators can manage login users directly in **Settings → User Access**:
+Administrators can manage login users directly in **People → Login access**:
 
 - create users with username (email), role, and password
 - update username, display name, and role
 - reset passwords without exposing existing hashes
 - force first-login password reset automatically for newly created users and admin-set password changes
 - enforce role-based dashboard access (`Administrator`, `Asset Manager`, `Viewer`, `Staff`, `Suspended`)
+
+## Workspace navigation
+
+| Section | Tools |
+| --- | --- |
+| Home | Common tasks, equipment/staff counts, follow-ups and recent activity. Full status breakdown is expandable. |
+| Equipment | Equipment register, receipts, inventory checks, labels/unused IDs and the administrator archive. Essential columns appear first; Show all columns restores the full register. |
+| People | Staff directory, assignments, returns, offboarding and administrator login access/approvals. Unlinked logins can open a prefilled Add person form directly. |
+| Activity | Follow-ups, tickets, notifications and searchable equipment history. |
+| Reports | Existing reporting with common filters first; date, issuance and warranty filters are under More filters. |
+| Settings | Exports, backup/recovery, administrative audit log, equipment types, bundles and version history. People & access opens the People section. |
+
+The navigation redesign keeps the existing API permissions, record dialogs, receipts, label printing, assignment/return actions and reporting calculations. Staff accounts continue to use their personal portal. Browser QA uses local sample records, not the deployed database.
 
 Bootstrap your first administrator account by setting:
 

@@ -52,7 +52,7 @@ function errorMessage(error: unknown) {
   return error instanceof Error ? error.message : 'Unable to complete this action.';
 }
 
-export default function UserAccess({ access, staff, refresh }: { access: AccessData; staff: StaffMember[]; refresh: () => Promise<void> }) {
+export default function UserAccess({ access, staff, refresh, onCreateStaff, onOpenStaff }: { access: AccessData; staff: StaffMember[]; refresh: () => Promise<void>; onCreateStaff?: (email: string) => void; onOpenStaff?: (id: string) => void }) {
   const [query, setQuery] = useState('');
   const [status, setStatus] = useState('All');
   const [requests, setRequests] = useState<Array<{ status?: string; staffId?: string; email?: string; role?: string }>>([]);
@@ -180,7 +180,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
     <section className="panel report useraccesspanel">
       <div className="historyhead">
         <h2>
-          User Access{' '}
+          Login access{' '}
           <HelpTip
             label="About user access"
             text="Manage app login accounts, passwords, and app roles in one place. App roles control dashboard permissions after sign in."
@@ -188,7 +188,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
         </h2>
         <button type="button" className="secondary" onClick={() => open()}>
           <Plus size={15} />
-          Add User
+          Add login
         </button>
       </div>
       <div className="reportfilterbox useraccessfilters">
@@ -222,7 +222,7 @@ export default function UserAccess({ access, staff, refresh }: { access: AccessD
           <tbody>
             {shown.map((r: AccessRow) => (
               <tr key={r.email}>
-                <td>{r.person?.name || 'No Staff Record'}<small>{r.linkMethod}</small></td>
+                <td>{r.person && onOpenStaff ? <button type="button" className="assetlink" onClick={() => onOpenStaff(r.person!.id)}>{r.person.name}</button> : r.person?.name || 'No staff record'}<small>{r.linkMethod}</small>{!r.person && r.hasLogin && onCreateStaff && <button type="button" className="assetlink" onClick={() => onCreateStaff(r.email)}>Add staff record</button>}</td>
                 <td>{r.email}</td>
                 <td>{r.role || '—'}</td>
                 <td>{r.hasLogin ? (r.login?.mustResetPassword ? 'Configured · Reset Pending' : 'Configured') : 'Not Created'}{r.login?.displayName && <small>{r.login.displayName}</small>}{r.login?.mustResetPassword&&<small><span className="portalaccessstatus pending">Must reset password on first sign-in</span></small>}</td>
