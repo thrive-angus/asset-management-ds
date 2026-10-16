@@ -1,12 +1,12 @@
-import {env} from 'cloudflare:workers';
+import {storageEnv,type StorageEnv} from '../../storage-env';
 import {getDb} from '../../../db';
 import {assets,settings,history} from '../../../db/schema';
 import {eq} from 'drizzle-orm';
 import {requireAccess,apiError} from '../../permissions';
 import {guardedBatch} from '../../atomic-batch';
 import {RECEIPT_SETTING} from '../../receipt-model';
-export async function POST(req:Request){let uploadKey='';try{
- const user=await requireAccess('manage'),form=await req.formData(),input=JSON.parse(String(form.get('record')||'{}')),file=form.get('file'),db=getDb();
+export async function POST(req:Request){let uploadKey='';let env:StorageEnv={};try{
+ const user=await requireAccess('manage');env=await storageEnv();const form=await req.formData(),input=JSON.parse(String(form.get('record')||'{}')),file=form.get('file'),db=getDb();
  if(!(file instanceof File)||!file.size||file.size>5*1024*1024||!['image/jpeg','image/png','image/webp','application/pdf'].includes(file.type)||!['receipt','evidence'].includes(input.scope)||typeof input.key!=='string')return Response.json({error:'Choose an adjusted JPG, PNG, WebP or PDF up to 5 MB.'},{status:400});
  if(!env.BUCKET)throw Error('Document storage unavailable.');
  const receiptScope=input.scope==='receipt',row=receiptScope?(await db.select().from(settings).where(eq(settings.id,RECEIPT_SETTING)))[0]:(await db.select().from(assets).where(eq(assets.id,String(input.assetId||''))))[0];

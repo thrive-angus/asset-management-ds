@@ -12,7 +12,7 @@ export async function identity(){
  const access=JSON.parse(rows.find(r=>r.id==='access')?.data||'{}'),legacy=JSON.parse(rows.find(r=>r.id==='personal-account:'+user.userId)?.data||'null'),verified=JSON.parse(rows.find(r=>r.id==='login-staff:'+email)?.data||'null');
  const linkedId=verified?.staffId||(legacy?.loginEmail?.trim().toLowerCase()===email?legacy.staffId:null),linkedPerson=people.find(p=>p.id===linkedId),matched=people.find(p=>p.email?.trim().toLowerCase()===email),owner=user.userId===OWNER_ID||email===OWNER_EMAIL;
  const actualRole=approvedRole(access[email],owner,!!((linkedPerson&&!activeStaff(linkedPerson))||(matched&&!activeStaff(matched))));
- let role=actualRole,previewStaff:Record<string,unknown>|null=null;
+ let role=actualRole,previewStaff:{id:string;name:string;email:string;archived?:boolean}|null=null;
  const cookie=(await headers()).get('cookie')||'',encoded=cookie.split(';').map(v=>v.trim()).find(v=>v.startsWith('ds_role_preview='))?.slice('ds_role_preview='.length);
  if(actualRole==='Administrator'&&encoded){try{const preview=JSON.parse(decodeURIComponent(encoded));if(['Asset Manager','Viewer','Staff'].includes(preview.role)){if(preview.role==='Staff'){previewStaff=people.find(p=>p.id===String(preview.staffId||''));if(previewStaff&&!previewStaff.archived&&previewStaff.email)role='Staff'}else role=preview.role}}catch{}}
  const isPreview=role!==actualRole,personalPerson=activeStaff(linkedPerson)?linkedPerson:activeStaff(matched)?matched:null;
@@ -29,4 +29,9 @@ export async function requireAccess(level:'read'|'manage'|'admin'='read'){
 }
 export function rejectPreviewWrite(user:{isPreview:boolean}){if(user.isPreview)throw new AccessError('Preview is read-only. Return to Administrator to make changes.',403)}
 export class AccessError extends Error{constructor(message:string,public status:number){super(message)}}
-export function apiError(e:unknown,fallback='Unable to complete this action.'){const message=e instanceof AccessError?e.message:e instanceof Error?e.message:fallback;return Response.json({error:message},{status:e instanceof AccessError?e.status:500})}
+export function apiError(e:unknown,fallback='Unable to complete this action.'){
+ const expected=e instanceof AccessError;
+ // Database errors can contain SQL, connection details and password-hash parameters.
+ if(!expected)console.error('API action failed',e instanceof Error?e.name:'Unknown error');
+ return Response.json({error:expected?e.message:fallback},{status:expected?e.status:500,headers:{'Cache-Control':'private, no-store'}});
+}

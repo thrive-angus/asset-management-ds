@@ -9,12 +9,8 @@ import {
   sessionAccount,
 } from "../../../local-auth";
 import { hashPassword, passwordStrengthError } from "../../../password-auth";
-
-function safeReturnPath(value: unknown): string {
-  if (typeof value !== "string") return "/";
-  if (!value.startsWith("/") || value.startsWith("//")) return "/";
-  return value;
-}
+import { safeReturnPath } from '../../../safe-return-path';
+import { readAuthRequest, AuthRequestError } from '../../../auth-request';
 
 export async function GET(req: Request) {
   const account = await sessionAccount();
@@ -39,7 +35,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Password reset is not required for this account." }, { status: 409 });
     }
 
-    const input = (await req.json()) as Record<string, unknown>;
+    const input = await readAuthRequest(req);
     const password = String(input.newPassword || "");
     const confirmPassword = String(input.confirmPassword || "");
     const returnTo = safeReturnPath(input.returnTo);
@@ -77,7 +73,8 @@ export async function POST(req: Request) {
     });
     return res;
   } catch (error) {
-    console.error("First-login password reset failed", error);
+    if (error instanceof AuthRequestError) return NextResponse.json({ error: error.message }, { status: error.status });
+    console.error("First-login password reset failed", error instanceof Error ? error.name : 'Unknown error');
     return NextResponse.json({ error: "Unable to update password right now." }, { status: 500 });
   }
 }

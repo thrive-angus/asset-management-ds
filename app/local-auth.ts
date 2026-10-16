@@ -2,10 +2,12 @@ import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { getDb } from "../db";
 import { authSessions, authUsers } from "../db/schema";
-import { verifyPassword } from "./password-auth";
+import { hashPassword, verifyPassword } from "./password-auth";
 
 export const SESSION_COOKIE = "ds_session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7;
+// Unknown accounts still perform password hashing to reduce account enumeration.
+const DUMMY_PASSWORD_HASH = hashPassword('unused-account-timing-check');
 
 export type AuthIdentity = {
   userId: string;
@@ -34,8 +36,8 @@ export async function authenticateByPassword(email: string, password: string) {
   const user = (
     await getDb().select().from(authUsers).where(eq(authUsers.email, normalized))
   )[0];
-  if (!user) return null;
-  if (!verifyPassword(password, user.passwordHash)) return null;
+  const valid = verifyPassword(password, user?.passwordHash || DUMMY_PASSWORD_HASH);
+  if (!user || !valid) return null;
 
   return {
     id: user.id,
@@ -73,7 +75,8 @@ export async function sessionAccount(): Promise<SessionAccount | null> {
     await getDb().select().from(authSessions).where(eq(authSessions.id, token))
   )[0];
   if (!session) return null;
-  if (new Date(session.expiresAt).getTime() <= Date.now()) {
+  const expiresAt = new Date(session.expiresAt).getTime();
+  if (!Number.isFinite(expiresAt) || expiresAt <= Date.now()) {
     await destroySession(token);
     return null;
   }

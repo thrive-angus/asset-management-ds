@@ -9,3 +9,10 @@ coverage
 data
 .git
 .github
+.env
+.env.*
+*.pem
+*.key
+deliverables
+outputs
+work

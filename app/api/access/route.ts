@@ -1,6 +1,6 @@
 import { equipmentTypeOptions } from '../../asset-identifiers';
 import { getDb } from '../../../db';
-import { settings, staff, history, authUsers } from '../../../db/schema';
+import { settings, staff, history, authUsers, authSessions } from '../../../db/schema';
 import { eq } from 'drizzle-orm';
 import { requireAccess, identity, ROLES, apiError, AccessError, OWNER_EMAIL } from '../../permissions';
 import { hashPassword, passwordStrengthError } from '../../password-auth';
@@ -32,6 +32,7 @@ export async function GET() {
   try {
     const user = await identity();
     if (!user) throw new AccessError('Sign in to access records.', 401);
+    if (user.mustResetPassword) throw new AccessError('Password reset required before accessing records.', 403);
     if (['Pending', 'Suspended'].includes(user.role)) return Response.json({ user });
 
     const db = getDb();
@@ -194,6 +195,9 @@ async function upsertAccount(user: AccessActor, input: AccessPayload) {
         updates.mustResetPassword = true;
       }
       await tx.update(authUsers).set(updates).where(eq(authUsers.id, currentAccount.id));
+      if (password || currentEmail !== nextEmail) {
+        await tx.delete(authSessions).where(eq(authSessions.userId, currentAccount.id));
+      }
     } else if (targetAccount) {
       const updates: { displayName: string; passwordHash?: string; mustResetPassword?: boolean } = { displayName };
       if (password) {
@@ -201,6 +205,7 @@ async function upsertAccount(user: AccessActor, input: AccessPayload) {
         updates.mustResetPassword = true;
       }
       await tx.update(authUsers).set(updates).where(eq(authUsers.id, targetAccount.id));
+      if (password) await tx.delete(authSessions).where(eq(authSessions.userId, targetAccount.id));
     } else {
       await tx.insert(authUsers).values({
         id: crypto.randomUUID(),

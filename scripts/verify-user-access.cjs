@@ -4,8 +4,8 @@ const path = require('node:path');
 const assert = require('node:assert/strict');
 const ts = require('typescript');
 const root = path.resolve(__dirname, '..');
-const schema = Object.fromEntries(['settings', 'staff', 'history', 'authUsers'].map(name => [
-  name, { name, id: { name: 'id' }, email: { name: 'email' } },
+const schema = Object.fromEntries(['settings', 'staff', 'history', 'authUsers', 'authSessions'].map(name => [
+  name, { name, id: { name: 'id' }, email: { name: 'email' }, userId: { name: 'userId' } },
 ]));
 let rows, failTransaction;
 const actor = { userId: 'admin', email: 'admin@example.com', displayName: 'Admin' };
@@ -80,7 +80,7 @@ const route = load('app/api/access/route.ts', {
   '../../permissions': { ...permissions, requireAccess: async () => actor },
   '../../password-auth': passwords,
 });
-function setup() { rows = { settings: [], staff: [], history: [], authUsers: [] }; failTransaction = false; }
+function setup() { rows = { settings: [], staff: [], history: [], authUsers: [], authSessions: [] }; failTransaction = false; }
 const input = { kind: 'user-account', email: 'new@example.com', displayName: 'New User', role: 'Staff', password: 'Test-Password-123!', expectedRole: null };
 async function send(change = {}) {
   const response = await route.POST(new Request('https://test/api/access', { method: 'POST', body: JSON.stringify({ ...input, ...change }) }));
@@ -127,8 +127,18 @@ async function main() {
   assert(passwords.verifyPassword(input.password, rows.authUsers[0].passwordHash));
   console.log('PASS editing without a password preserves the existing password');
 
+  const accountId = rows.authUsers[0].id;
+  rows.authSessions.push({ id: 'old-session', userId: accountId }, { id: 'other-session', userId: 'other' });
+  assert.equal((await send({ expectedRole: 'Staff', password: 'Replacement-Password-123!' })).status, 200);
+  assert.deepEqual(rows.authSessions.map(row => row.id), ['other-session']);
+  assert(passwords.verifyPassword('Replacement-Password-123!', rows.authUsers[0].passwordHash));
+  rows.authSessions.push({ id: 'renamed-session', userId: accountId });
+  assert.equal((await send({ currentEmail: input.email, email: 'renamed@example.com', expectedRole: 'Staff', password: undefined })).status, 200);
+  assert.deepEqual(rows.authSessions.map(row => row.id), ['other-session']);
+  console.log('PASS admin password resets and email changes revoke only the affected user sessions');
+
   const before = JSON.stringify(rows);
-  const stale = await send();
+  const stale = await send({ email: 'renamed@example.com' });
   assert.equal(stale.status, 409);
   assert.match(stale.body.error, /Access changed/);
   assert.equal(JSON.stringify(rows), before);
@@ -153,7 +163,7 @@ async function main() {
     const snapshot = JSON.stringify(rows);
     const failure = await send({ kind });
     assert.equal(failure.status, 500);
-    assert.match(failure.body.error, /Database commit failed/);
+    assert.equal(failure.body.error, 'Unable to complete this action.');
     assert.equal(JSON.stringify(rows), snapshot);
   }
   console.log('PASS transaction failures return JSON 500 and roll back both actions');

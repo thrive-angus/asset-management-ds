@@ -88,6 +88,26 @@ The first app start creates that user if it doesn't already exist.
 
 `start:docker` runs `scripts/init-postgres.mjs` before starting the app. This script creates required tables and ensures the bootstrap admin user has Administrator access.
 
+## Security controls
+
+API writes require a same-origin browser request. If the reverse proxy rewrites the Host header, set `APP_ORIGIN` to the public HTTPS origin (for example `https://assets.example.com`). Cookie-authenticated API clients must send that Origin header. This applies to login, password reset, JSON writes, and file uploads.
+
+Login attempts are limited to 10 per email in 15 minutes using an atomic PostgreSQL counter shared across app replicas. Successful sign-in clears that email's counter. `start:docker` also creates `auth_login_attempts`; deployments using another start command must run `pnpm run db:init:postgres` before serving requests. Expired counters can be removed periodically with `DELETE FROM auth_login_attempts WHERE window_started_at < NOW() - INTERVAL '2 days'`.
+
+Login and first-login password reset accept JSON only and enforce a streaming 16 KB body limit, including requests without Content-Length. Password inputs are capped at 1,024 characters before hashing.
+
+Administrator password resets and sign-in email changes revoke the affected user's existing sessions. Mandatory-reset sessions cannot access business APIs. Unexpected API errors return a generic response rather than database details. API responses use private/no-store caching, and middleware applies same-origin framing and MIME-sniffing protections.
+
+Run `node scripts/verify-security.cjs`, `node scripts/verify-user-access.cjs`, and `pnpm audit --prod` after security changes. These handler checks use isolated fixtures; they do not replace a live deployment test with PostgreSQL and the production reverse proxy.
+
+For HTTP checks, start a built preview with `node node_modules/vinext/dist/cli.js start --hostname 127.0.0.1 --port 3199`, then run `node scripts/verify-security-http.cjs`. The HTTP script sends no credentials and checks every protected API method, cross-origin login rejection, authentication body limits and response headers.
+
+At the reverse proxy, enforce HTTPS, request body size limits and IP/global login throttling in addition to the account limit. Keep PostgreSQL private, use a dedicated database user, and keep database/bootstrap secrets in deployment settings. `.dockerignore` excludes `.env` files and private keys from the build context. This source review does not verify deployed firewall rules, TLS, secrets, or bucket access policies. Uploaded files have size/type allowlists but still need content validation or malware scanning for higher assurance; no malware scanner is included.
+
+Audit results (2026-10-16): all 38 protected API methods rejected anonymous requests in handler checks; built HTTP checks confirmed anonymous rejection, cross-origin rejection and security headers. Production dependency advisories fell from 15 to 0. Including development dependencies, two advisories remain: [esbuild under Drizzle Kit](https://github.com/advisories/GHSA-67mh-4wv8-2f99) (moderate; its development server must not be exposed) and [braces under build/lint glob tooling](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) (high; no upstream patch listed). The latter processes build-time patterns, and no business API path to it was identified. Avoid untrusted build patterns and run builds in isolated environments. A limited secret-pattern scan of tracked working-tree files found no candidates; Git history, deployed secrets and remote storage were not scanned. Full TypeScript checking still reports existing PostgreSQL migration/UI typing errors even though the production build and focused security checks pass. The new throttle's actual PostgreSQL execution and the production proxy must be verified after redeployment; local checks use SQL fixtures.
+
+The Node deployment has no Cloudflare R2 binding. Attachment routes now resolve that binding after authorization so anonymous requests receive an authentication error instead of a module-load failure. Authenticated uploads/downloads still require a compatible storage adapter or a runtime with BUCKET configured; moving the lookup does not provide Node storage.
+
 ## Migrating Existing SQLite Data to PostgreSQL
 
 If you are migrating from the earlier SQLite deployment, run:

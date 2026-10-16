@@ -28,6 +28,8 @@ async function init() {
       CREATE TABLE IF NOT EXISTS settings (id TEXT PRIMARY KEY, data TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS auth_users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, display_name TEXT NOT NULL, must_reset_password BOOLEAN NOT NULL DEFAULT FALSE, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS auth_sessions (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, expires_at TEXT NOT NULL, created_at TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS auth_login_attempts (id TEXT PRIMARY KEY, attempts INTEGER NOT NULL, window_started_at TIMESTAMPTZ NOT NULL);
+      CREATE INDEX IF NOT EXISTS auth_login_attempts_window_idx ON auth_login_attempts (window_started_at);
       CREATE INDEX IF NOT EXISTS auth_sessions_user_id_idx ON auth_sessions (user_id);
       CREATE INDEX IF NOT EXISTS auth_sessions_expires_at_idx ON auth_sessions (expires_at);
     `);
