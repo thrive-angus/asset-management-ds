@@ -1,10 +1,9 @@
 Dental Stars Asset Manager
-Version: 226
-Commit: f6b2afab24acf4ed5771498f20c227e0baa960ed
-Exported: 2026-10-15
+Version: 1.0.0
+Release date: 2026-10-16
+Git tag: v1.0.0
 
-Includes centralized record exports in Settings > Data Export. CSV exports on working pages were removed. Administrator, Asset Manager and Viewer export permissions are enforced server-side. Complete backup remains Administrator-only.
-
-This archive contains source code only. Existing equipment, staff, history and uploaded documents must be backed up separately.
-
-Hosting dependencies: Vinext on Cloudflare Workers, D1 database, R2 storage, and ChatGPT/Sites authentication. A conventional VPS requires adapting storage/database bindings and authentication; copying these files alone is insufficient. Refer to README.md, package.json, lockfile, database schema/migrations and hosting configuration.
+Version source of truth: package.json
+Release notes: app/releases.json (older numbered releases remain in App Version History).
+Runtime: Vinext, PostgreSQL and app-managed authentication.
+This source checkout excludes installed dependencies, build output, credentials and database data.

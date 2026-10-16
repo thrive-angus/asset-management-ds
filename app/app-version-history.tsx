@@ -1,7 +1,9 @@
 'use client';
 import PaginatedTable from './paginated-table';
-// Append a release here whenever a production update is prepared. Retain earlier entries.
-export const APP_RELEASES=[
+import releases from './releases.json';
+import {APP_VERSION} from './app-version';
+// Frozen history from before Semantic Versioning. Use pnpm release for new entries.
+const LEGACY_RELEASES=[
  {version:233,date:'2026-10-16',changes:'User Access adds a Reset Pending filter and clear badge so Administrators can quickly find accounts still required to complete first-login password reset.'},
  {version:232,date:'2026-10-16',changes:'Newly created logins and admin-set password changes now require the user to reset password on first sign-in before any dashboard access is allowed. Added dedicated first-login reset flow and enforced access gate until completion.'},
  {version:231,date:'2026-10-16',changes:'User Access now lets Administrators securely create and update login users in-app, including username (email), role, display name and password reset. Roles continue to gate dashboard and action permissions after login.'},
@@ -85,4 +87,5 @@ export const APP_RELEASES=[
  {version:151,date:'2026-10-08',changes:'My Equipment List placed first. Staff notification and acknowledgement counts aligned with management badges.'},
  {version:150,date:'2026-10-08',changes:'Administrator View As previews with server-enforced read-only access. Registration and inventory verification improved.'}
 ];
-export default function AppVersionHistory(){return <div className="panel report appversionhistory"><div className="historyhead"><div><h2>App Version History</h2><p>Current release: <strong>Version {APP_RELEASES[0].version}</strong></p></div></div><p className="hint">Recent app releases are recorded below. Equipment transactions remain in each asset’s history; backups are managed separately under Backup & Recovery.</p><div className="tablewrap"><PaginatedTable paginationKey="app-releases"><thead><tr><th>Version</th><th>Release Date</th><th>Changes</th></tr></thead><tbody>{APP_RELEASES.map((r,index)=><tr key={r.version}><th scope="row">{r.version}{index===0&&<span className="badge">Current</span>}</th><td>{r.date}</td><td>{r.changes}</td></tr>)}</tbody></PaginatedTable></div></div>}
+export const APP_RELEASES=[...releases,...LEGACY_RELEASES.map(release=>({...release,version:`Legacy v${release.version}`}))];
+export default function AppVersionHistory(){return <div className="panel report appversionhistory"><div className="historyhead"><div><h2>App Version History</h2><p>Current release: <strong>v{APP_VERSION}</strong></p></div></div><p className="hint">Recent app releases are recorded below. Equipment transactions remain in each asset’s history; backups are managed separately under Backup & Recovery.</p><div className="tablewrap"><PaginatedTable paginationKey="app-releases"><thead><tr><th>Version</th><th>Release Date</th><th>Changes</th></tr></thead><tbody>{APP_RELEASES.map((r,index)=><tr key={r.version}><th scope="row">{r.version}{index===0&&<span className="badge">Current</span>}</th><td>{r.date}</td><td>{r.changes}</td></tr>)}</tbody></PaginatedTable></div></div>}

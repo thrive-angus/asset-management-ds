@@ -1,4 +1,22 @@
-# vinext-starter
+# Dental Stars Asset Manager
+
+## Release versioning
+
+The first Semantic Versioning release is **1.0.0**. `package.json` is the version source of truth; the footer and Settings → Version History use it directly. Historical releases 150–233 retain their original numbers under “Legacy v…” and are not reinterpreted as semantic releases.
+
+Follow [Semantic Versioning](https://semver.org/): **PATCH** for compatible bug/security fixes, **MINOR** for compatible features, and **MAJOR** for breaking changes to supported API contracts, data import/export formats or required workflows. Compatible navigation/style changes do not by themselves require a major bump. The current release tool prepares stable production versions; prerelease channels are not configured.
+
+Prepare a release after finishing its changes:
+
+```sh
+pnpm release patch "Fix a user-access validation issue"
+pnpm release minor "Add a new reporting workflow"
+pnpm release major "Describe the breaking change and migration"
+```
+
+Choose **one** command appropriate to the release. Add `--dry-run` to preview without writing. The command updates the package version, prepends dated notes in `app/releases.json`, and updates `SOURCE_VERSION.txt`. It does not commit, tag or push. Previous release notes must remain unchanged. No dependency lockfile update is needed when only this private root package's version changes.
+
+Run `pnpm version:check`, `pnpm test:version`, the checks relevant to the change, and `pnpm run build`. Development and production builds reject inconsistent release metadata. Review and commit the changes, then create an annotated tag on that exact commit, for example `git tag -a v1.0.1 -m "Release v1.0.1"`. Push `main` for the existing Dokploy auto-deployment and push the matching tag, for example `git push origin v1.0.1`. Tags identify releases; they do not replace the existing branch deployment trigger. Never move an already published release tag or change the contents of that release; prepare a new patch instead. Version numbers describe releases, not every intermediate development commit.
 
 A clean full-stack starter running on [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and Drizzle support.
 

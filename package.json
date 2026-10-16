@@ -1,6 +1,6 @@
 {
   "name": "site-creator-vinext-starter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "engines": {
     "node": ">=22.13.0"
@@ -14,7 +14,10 @@
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "drizzle-kit generate",
     "db:init:postgres": "node scripts/init-postgres.mjs",
-    "db:migrate:sqlite-to-postgres": "node scripts/migrate-sqlite-to-postgres.mjs"
+    "db:migrate:sqlite-to-postgres": "node scripts/migrate-sqlite-to-postgres.mjs",
+    "release": "node scripts/release.mjs",
+    "version:check": "node scripts/release.mjs --check",
+    "test:version": "node --test scripts/release-model.test.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
