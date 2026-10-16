@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.0.2",
+    "date": "2026-10-16",
+    "changes": "Use the supplied Dental Stars logo as the browser favicon and web manifest icon"
+  },
+  {
     "version": "1.0.1",
     "date": "2026-10-16",
     "changes": "Fix VPS receipt and evidence storage with PostgreSQL persistence, complete-backup document recovery and clear preview errors"
