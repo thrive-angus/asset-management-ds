@@ -69,6 +69,7 @@ function load(relative, mocks = {}) {
 }
 const passwords = load('app/password-auth.ts');
 const { userAccountExpectedRole } = load('app/user-access-model.ts');
+const { availableStaffLogins, staffDetailsFromLogin } = load('app/staff-login-model.ts');
 const permissions = load('app/permissions.ts', {
   './access-policy-model': {}, './chatgpt-auth': {}, '../db': {},
   'next/headers': {}, '../db/schema': schema,
@@ -88,6 +89,23 @@ async function send(change = {}) {
   return { status: response.status, body: await response.json() };
 }
 async function main() {
+  const unlinkedLogins = availableStaffLogins([
+    { email: ' CHRIS.M@EXAMPLE.COM ', displayName: 'Chris Kitane' },
+    { email: 'chris.m@example.com', displayName: 'Duplicate' },
+    { email: 'existing@example.com', displayName: 'Existing Staff' },
+    { email: 'different-login@example.com', displayName: 'Verified Link' },
+  ], [{ email: ' EXISTING@example.com ' }], { 'different-login@example.com': 'STAFF-1' });
+  assert.deepEqual(unlinkedLogins, [{ email: 'chris.m@example.com', displayName: 'Chris Kitane' }]);
+  assert.deepEqual(staffDetailsFromLogin(unlinkedLogins[0]), {
+    firstName: 'Chris', lastName: 'Kitane', name: 'Chris Kitane', email: 'chris.m@example.com',
+  });
+  assert.deepEqual(staffDetailsFromLogin({ email: 'one@example.com', displayName: 'Prince' }), {
+    firstName: 'Prince', lastName: '', name: 'Prince', email: 'one@example.com',
+  });
+  assert.equal(staffDetailsFromLogin({ email: 'blank@example.com' }).firstName, '');
+  assert.equal(availableStaffLogins(unlinkedLogins, [{ email: 'chris.m@example.com' }], {}).length, 0);
+  console.log('PASS Add Staff reuses unlinked login details, excludes existing links and avoids inventing missing names');
+
   for (const role of ['Staff', 'Viewer', 'Asset Manager', 'Administrator', 'Suspended']) {
     setup();
     const loadedAccess = { [input.email]: role };
