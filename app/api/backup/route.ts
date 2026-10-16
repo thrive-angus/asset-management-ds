@@ -3,6 +3,7 @@ import { getDb } from '../../../db';
 import { assets, staff, history, audits, auditChecks, settings } from '../../../db/schema';
 import { requireAccess, apiError } from '../../permissions';
 import { eq } from 'drizzle-orm';
+import {storageEnv} from '../../storage-env';
 
 const tables = { assets, staff, history, audits, auditChecks, settings };
 type BackupTable = (typeof BACKUP_TABLES)[number];
@@ -34,12 +35,7 @@ function restoreMode(value: unknown): RestoreMode {
 }
 
 async function getBucket() {
-  try {
-    const workers = await import('cloudflare:workers');
-    return workers.env?.BUCKET;
-  } catch {
-    return undefined;
-  }
+  return (await storageEnv()).BUCKET;
 }
 
 export async function GET(req?: Request) {

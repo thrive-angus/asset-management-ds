@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.0.1",
+    "date": "2026-10-16",
+    "changes": "Fix VPS receipt and evidence storage with PostgreSQL persistence, complete-backup document recovery and clear preview errors"
+  },
+  {
     "version": "1.0.0",
     "date": "2026-10-16",
     "changes": "Semantic Versioning baseline for the existing production app. Includes the redesigned Home, Equipment, People, Activity and Reports navigation; existing-login staff prefilling; user-access fixes and independent password visibility controls; and authentication, session, request and dependency security improvements. Earlier numbered releases are preserved as legacy history."

@@ -26,6 +26,8 @@ async function init() {
       CREATE TABLE IF NOT EXISTS audits (id TEXT PRIMARY KEY, data TEXT NOT NULL, date TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS audit_checks (id TEXT PRIMARY KEY, audit_id TEXT NOT NULL, data TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS settings (id TEXT PRIMARY KEY, data TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS document_objects (key TEXT PRIMARY KEY, data BYTEA NOT NULL, content_type TEXT NOT NULL, uploaded_at TIMESTAMPTZ NOT NULL DEFAULT NOW());
+      CREATE INDEX IF NOT EXISTS document_objects_uploaded_at_idx ON document_objects (uploaded_at DESC);
       CREATE TABLE IF NOT EXISTS auth_users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, display_name TEXT NOT NULL, must_reset_password BOOLEAN NOT NULL DEFAULT FALSE, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS auth_sessions (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, expires_at TEXT NOT NULL, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS auth_login_attempts (id TEXT PRIMARY KEY, attempts INTEGER NOT NULL, window_started_at TIMESTAMPTZ NOT NULL);

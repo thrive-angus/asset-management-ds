@@ -1,7 +1,7 @@
 Dental Stars Asset Manager
-Version: 1.0.0
+Version: 1.0.1
 Release date: 2026-10-16
-Git tag: v1.0.0
+Git tag: v1.0.1
 
 Version source of truth: package.json
 Release notes: app/releases.json (older numbered releases remain in App Version History).

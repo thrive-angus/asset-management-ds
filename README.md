@@ -119,6 +119,14 @@ The first app start creates that user if it doesn't already exist.
 
 `start:docker` runs `scripts/init-postgres.mjs` before starting the app. This script creates required tables and ensures the bootstrap admin user has Administrator access.
 
+### Receipt and evidence storage on the VPS
+
+When `DATABASE_URL` is configured, receipts, evidence, adjusted documents and saved in-app backups use the PostgreSQL `document_objects` table. Startup creates it automatically. File bytes persist in the database service's volume across application redeployments; no Cloudflare account, public bucket, extra environment variables or application-container disk mount is required. Include this table in hosting-level PostgreSQL backups and monitor database disk usage. The application keeps the existing 5 MB document upload and 20 MB in-app backup file limits; saved backups also consume database space. Cloudflare deployments without `DATABASE_URL` retain their original R2 binding.
+
+Moving SQLite/database records alone does **not** move the former ChatGPT-hosted app's uploaded file bytes. A valid complete Dental Stars JSON backup includes a `files` array containing `key`, `type` and `base64` for each receipt/evidence file, including originals retained in history. To recover those files, preview that backup in Settings → Backup & Recovery using **Import Missing Records**: this also restores missing files by their original keys while retaining existing records and existing files. Review the preview before confirming because missing business records may also be added. Do not use Full Restore merely to recover documents. If the original app still opens, export a complete backup there; otherwise locate a previously downloaded complete backup. Missing original bytes cannot be recovered from filenames or database references; upload the originals again if no complete backup is available.
+
+Run `node scripts/verify-document-storage.cjs` for adapter and preview error checks using isolated SQL fixtures. These do not replace a deployment check against the real PostgreSQL service. Deployments that bypass `start:docker` must run `pnpm run db:init:postgres` before serving document requests.
+
 ## Security controls
 
 API writes require a same-origin browser request. If the reverse proxy rewrites the Host header, set `APP_ORIGIN` to the public HTTPS origin (for example `https://assets.example.com`). Cookie-authenticated API clients must send that Origin header. This applies to login, password reset, JSON writes, and file uploads.
