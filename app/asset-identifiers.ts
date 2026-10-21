@@ -1,4 +1,4 @@
-export const ID_TYPES=['Laptop','Keyboard','Mouse','Headset','HDMI Cable','LAN Cable','USB Hub','Monitor'];
+export const ID_TYPES=['Laptop','Keyboard','Mouse','Headset','HDMI Cable','LAN Cable','USB Hub','Monitor','Camera','System Unit','Charger'];
 const PREFIXES:Record<string,string>={Laptop:'LAP',Keyboard:'KEY',Mouse:'MOU',Headset:'HST','HDMI Cable':'HDMI','LAN Cable':'LAN','USB Hub':'HUB',Monitor:'MON'};
 export function idPrefix(category:string){return PREFIXES[category]||category.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,25)}
 export function unusedIdentifiers(category:string,records:any[]){const prefix=idPrefix(category);if(!prefix)return [];const used=new Set(records.map(a=>String(a.id).replaceAll('-','').toUpperCase()));const matching=records.map(a=>String(a.id).match(new RegExp('^DS-?'+prefix+'-?(\\d+)$','i'))).filter(Boolean);const highest=Math.max(0,...matching.map(m=>Number(m![1])));const limit=Math.max(100,Math.ceil((highest+1)/100)*100);return Array.from({length:limit},(_,i)=>'DS-'+prefix+'-'+String(i+1).padStart(3,'0')).filter(id=>!used.has(id.replaceAll('-','')))}

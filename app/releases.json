@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.2.0",
+    "date": "2026-10-22",
+    "changes": "Add Camera, System Unit and Charger to built-in equipment types, retaining Monitor and sharing defaults with register and reports"
+  },
+  {
     "version": "1.1.1",
     "date": "2026-10-22",
     "changes": "Show notification dates and recorded times in Philippine time across management and staff portals, with an honest fallback for date-only records"

@@ -4,8 +4,9 @@ import {auditFollowupStatus} from './audit-followup-model';
 import {acknowledgedEquipment} from './equipment-acknowledgement';
 import {assignedTo,staffStatus} from './workflow-model';
 import {usable,todayPH} from './asset-model';
+import {ID_TYPES} from './asset-identifiers';
 export const REPORTS=['Inventory Summary','Staff Assignments','Available Equipment','Outstanding Returns','Equipment History','Repairs','Damaged Equipment','Lost Equipment','Returns & Replacements','Offboarding Clearance','Tickets','Inventory Check Results','Incomplete Records','Unused Asset IDs','Archived Equipment'];
-export const REPORT_CATEGORIES=['Laptop','Keyboard','Mouse','Headset','HDMI Cable','LAN Cable','USB Hub','Monitor'];
+export const REPORT_CATEGORIES=ID_TYPES;
 export type ReportFilters={category:string;staffId:string;status:string;condition:string;from:string;to:string;ticketStatus:string;verification:string};
 export const EMPTY_REPORT_FILTERS:ReportFilters={category:'All',staffId:'All',status:'All',condition:'All',from:'',to:'',ticketStatus:'All',verification:'All'};
 export function pendingReturn(s:any){return staffStatus(s)==='Inactive'||s.stage==='Offboarding'||!!s.end&&s.end<=todayPH()}
