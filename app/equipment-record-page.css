@@ -1,0 +1,42 @@
+.workspace-shell .equipmentrecordpage{max-width:1200px;margin:0 auto;color:#29495a}
+.workspace-shell .equipmentrecordpage[hidden],.workspace-shell .equipmentrecordsection[hidden],.workspace-shell .equipmentrecordbackground[hidden]{display:none!important}
+.equipmentrecordback{display:inline-flex;align-items:center;gap:8px;margin-bottom:24px}
+.workspace-shell .equipmentrecordheader{position:static;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;padding:0 0 26px;background:transparent;border:0;height:auto;box-shadow:none;z-index:auto}
+.equipmentrecordheader h1{font-size:30px;line-height:1.25;margin:8px 0;color:#22485a}
+.equipmentrecordheader p{font-size:15px;margin:0 0 14px;color:#637b89}
+.equipmentrecordbadges{display:flex;align-items:center;flex-wrap:wrap;gap:12px;font-size:13px}
+.equipmentrecordactions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.equipmentrecordactions button{display:inline-flex;align-items:center;gap:7px}
+.equipmentrecordmore{position:relative;font-size:12px}
+.equipmentrecordmore>summary{display:flex;align-items:center;gap:7px;cursor:pointer;min-height:38px;padding:8px;border-radius:7px}
+.equipmentrecordmore>div{position:absolute;top:100%;right:0;background:white;border:1px solid #e1e8ed;border-radius:8px;padding:12px;min-width:160px;z-index:5;box-shadow:0 6px 20px #29495a15}
+.equipmentrecordtabs{display:flex;gap:4px;border-bottom:1px solid #dce5ea;margin-bottom:24px;overflow-x:auto}
+.equipmentrecordtabs>button{flex-shrink:0;border:0;border-bottom:3px solid transparent;background:transparent;padding:15px 14px;font-size:13px;color:#637b89;cursor:pointer}
+.equipmentrecordtabs>button.active{border-bottom-color:#269da2;color:#167d83;background:#edf7f6}
+.equipmentrecordtabs>button:focus-visible,.equipmentrecordback:focus-visible{outline:2px solid #269da2;outline-offset:-2px}
+.equipmentrecordsection,.equipmentrecordeditor{background:#fff;border:1px solid #e1e8ed;border-radius:12px;padding:28px;min-width:0}
+.equipmentrecordsection h2,.equipmentrecordeditnotice h2{font-size:18px;margin:0 0 24px;display:flex;align-items:center;gap:9px}
+.equipmentrecordsection h3{font-size:15px;margin:28px 0 18px}
+.equipmentrecordvalues{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px 28px;margin:0}
+.equipmentrecordvalues>div{min-width:0}
+.equipmentrecordvalues dt{font-size:12px;color:#718591;margin-bottom:7px}
+.equipmentrecordvalues dd{font-size:14px;line-height:1.6;color:#29495a;margin:0;overflow-wrap:anywhere;white-space:pre-wrap}
+.equipmentrecordnotes{border-top:1px solid #e7ecef;margin-top:26px;padding-top:1px}
+.equipmentrecordnotes p{font-size:14px;line-height:1.7;white-space:pre-wrap}
+.equipmentrecordpage .assetrecordlinks{margin-top:26px;padding-top:22px;border-top:1px solid #e7ecef;gap:10px}
+.equipmentrecordpage .equipmentdetailsection{border:0;margin:0;padding:0}
+.equipmentrecordpage .equipmentdetailsection>summary{display:none}
+.equipmentrecordpage .equipmentsectionbody{padding:0}
+.equipmentrecordpage .equipmentcontrols{margin-top:0}
+.equipmentrecordpage .acknowledgementrecord{margin:0 0 25px}
+.equipmentrecordpage .formgrid{gap:22px}
+.equipmentrecordeditor form label{font-size:13px}
+.equipmentrecordeditor .equipmentidentityfields{display:grid;gap:22px;align-content:start}
+.equipmentrecordeditor .recordsectiontitle>h3{margin:0 0 22px}
+.equipmentrecordeditnotice{padding-bottom:20px;margin-bottom:24px;border-bottom:1px solid #e7ecef}
+.equipmentrecordeditnotice p{font-size:13px;line-height:1.6;color:#637b89;margin:0}
+.equipmentrecordeditnotice h2{margin-bottom:8px}
+.equipmentrecordsavebar{position:sticky;bottom:0;display:flex;gap:10px;justify-content:flex-end;align-items:center;background:#fff;padding:18px 0 0;margin-top:24px;border-top:1px solid #dce5ea;z-index:4}
+.equipmentrecordsavebar>span{font-size:12px;color:#637b89;margin-right:auto}
+@media(max-width:1000px){.equipmentrecordvalues{grid-template-columns:repeat(2,minmax(0,1fr))}.workspace-shell .equipmentrecordheader{flex-direction:column}.equipmentrecordactions{justify-content:flex-start}}
+@media(max-width:600px){.equipmentrecordsection,.equipmentrecordeditor{padding:20px 16px}.equipmentrecordvalues{grid-template-columns:1fr;gap:20px}.equipmentrecordheader h1{font-size:25px}.equipmentrecordactions{gap:8px}.equipmentrecordtabs>button{padding:13px 10px;font-size:12px}.equipmentrecordsavebar{flex-wrap:wrap;padding-bottom:10px}.equipmentrecordsavebar>span{width:100%}.equipmentrecordeditor .formgrid{grid-template-columns:1fr}.equipmentrecordsection .actions{flex-wrap:wrap}.equipmentrecordmore>div{right:0}.equipmentrecordpage .evidenceuploadpanel{padding:16px}}

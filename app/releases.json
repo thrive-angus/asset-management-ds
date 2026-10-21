@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.4.0",
+    "date": "2026-10-22",
+    "changes": "Replace existing equipment record popups with dedicated shareable pages, focused sections and explicit editing while preserving equipment workflows and return navigation"
+  },
+  {
     "version": "1.3.0",
     "date": "2026-10-22",
     "changes": "Make inventory-check summary cards filter and focus equipment results, clear conflicting filters and highlight the active selection"

@@ -99,6 +99,8 @@ Administrators can manage login users directly in **People → Login access**:
 
 The navigation redesign keeps the existing API permissions, record dialogs, receipts, label printing, assignment/return actions and reporting calculations. Staff accounts continue to use their personal portal. Browser QA uses local sample records, not the deployed database.
 
+Equipment records open as dedicated pages at `/equipment/<asset-id>`. The default Summary is read-only; Assignment & Returns, Purchase & Maintenance, Documents and History retain their existing actions and permission checks. Edit details opens the existing form, and saving returns to Summary. Back to the originating workspace list retains its filters, pagination and scroll position during in-app navigation. Browser Back/Forward and legacy `?asset=` links are supported. Direct links require sign-in and show only records available through the current user's protected APIs; unavailable records have a safe return to Equipment. Registering a new asset still uses its focused dialog.
+
 Bootstrap your first administrator account by setting:
 
 - `AUTH_BOOTSTRAP_EMAIL`
