@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.1.0",
+    "date": "2026-10-21",
+    "changes": "Add dashboard equipment availability by type with available and assigned counts linked to filtered equipment lists"
+  },
+  {
     "version": "1.0.2",
     "date": "2026-10-16",
     "changes": "Use the supplied Dental Stars logo as the browser favicon and web manifest icon"
