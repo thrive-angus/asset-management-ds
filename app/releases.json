@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.1.1",
+    "date": "2026-10-22",
+    "changes": "Show notification dates and recorded times in Philippine time across management and staff portals, with an honest fallback for date-only records"
+  },
+  {
     "version": "1.1.0",
     "date": "2026-10-21",
     "changes": "Add dashboard equipment availability by type with available and assigned counts linked to filtered equipment lists"
