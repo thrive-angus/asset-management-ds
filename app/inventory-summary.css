@@ -1,0 +1,7 @@
+.inventorypage .inventorysummary>button{padding:18px 20px;background:#f8fafc;border:1px solid #e2e8ef;border-radius:8px;text-align:left;min-width:0;cursor:pointer;color:inherit;transition:background .15s,border-color .15s}
+.inventorypage .inventorysummary>button:hover:not(:disabled){background:#edfafa;border-color:#80cdd0}
+.inventorypage .inventorysummary>button[aria-pressed="true"]{background:#edfafa;border-color:#319da2;box-shadow:inset 0 0 0 1px #319da2}
+.inventorypage .inventorysummary>button:focus-visible{outline:3px solid #208c91;outline-offset:3px}
+.inventorypage .inventorysummary>button:disabled{cursor:default;opacity:.65}
+@media(max-width:900px){.inventorypage .inventorysummary>button{padding:16px}}
+@media(prefers-reduced-motion:reduce){.inventorypage .inventorysummary>button{transition:none}}

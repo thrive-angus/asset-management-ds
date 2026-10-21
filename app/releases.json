@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.3.0",
+    "date": "2026-10-22",
+    "changes": "Make inventory-check summary cards filter and focus equipment results, clear conflicting filters and highlight the active selection"
+  },
+  {
     "version": "1.2.0",
     "date": "2026-10-22",
     "changes": "Add Camera, System Unit and Charger to built-in equipment types, retaining Monitor and sharing defaults with register and reports"
