@@ -231,6 +231,10 @@ When using the Sites plugin, follow its skill instructions for installation, bui
 
 The portable build runs Vinext directly without a host `timeout` command. The managed-linux build uses `scripts/build-verified.sh` and its existing `SITES_BUILD_TIMEOUT` setting.
 
+## Table pagination
+
+Tables with more than 10 results offer **Rows per page**: 10, 20, 30, 40, 50 or 100. Activity history offers the same **Entries per page** options. The default is 10. Changing the size returns to the first page, and keyed lists remember the chosen size and page when reopened during the same app session. Small tables keep their compact footer; a previously selected larger size remains available after filtering. Page size controls only the displayed rows; exports continue to include all matching records.
+
 ## Password changes and email recovery (VPS / Docker)
 
 Signed-in users can open **Change password** from their account menu (or the Staff portal header). They must enter their current password. A successful change signs out all sessions; they sign in again with the new password. This works without an email provider.
