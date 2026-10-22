@@ -1,8 +1,9 @@
 'use client';
-import type { ReactNode } from 'react';
+import {useState,type ReactNode} from 'react';
 import { ArrowUpRight, Plus, Users, ScanLine, ArrowLeftRight, Package, CheckCircle2, Bell } from 'lucide-react';
 import type {EquipmentAvailability} from './equipment-availability';
 import DashboardNotifications,{type DashboardNotification} from './dashboard-notifications';
+import './home-organized.css';
 
 type Event = { id: string; assetId: string; date: string; action: string; recordedBy?: { name?: string } };
 type Props = {
@@ -17,6 +18,10 @@ type Props = {
 
 export default function WorkspaceHome(props: Props) {
   const { loading, canManage } = props;
+  const [showAllTypes,setShowAllTypes]=useState(false);
+  const registeredTypes=(props.equipmentBreakdown||[]).filter(item=>item.registered>0);
+  const emptyTypes=(props.equipmentBreakdown||[]).filter(item=>item.registered===0);
+  const visibleTypes=showAllTypes?registeredTypes:registeredTypes.slice(0,6);
   const metrics = [
     { label: 'Equipment', value: props.total, note: 'All registered items', action: () => props.onEquipment('All') },
     { label: 'Assigned', value: props.assigned, note: 'Currently with your team', action: () => props.onEquipment('Assigned') },
@@ -37,20 +42,26 @@ export default function WorkspaceHome(props: Props) {
   const attention = [
     { label: 'Equipment follow-ups', value: props.followups, tab: 'Equipment Follow-Ups', note: 'Review items needing attention' },
     { label: 'Open tickets', value: props.tickets, tab: 'Tickets', note: 'Check reported equipment issues' },
-    { label: 'Unread notifications', value: props.notifications, tab: 'Notifications', note: 'Catch up on recent updates' },
   ];
-  return <div className="workspacehome">
-    <div className="homewelcome"><div><span className="eyebrow">YOUR WORKSPACE</span><h1>{props.name ? `Welcome, ${props.name.split(' ')[0]}.` : 'Welcome back.'}</h1><p>Keep equipment moving and your team connected.</p></div><span className="homeworkspacebadge"><span className="dot"/>Dental Stars</span></div>
-    <section className="homequickstart" aria-labelledby="quick-start-title"><div className="homeblockheading"><h2 id="quick-start-title">What would you like to do?</h2><span>Start with a task</span></div><div className="hometasks">{tasks.map(({ label, note, icon: Icon, action }) => <button key={label} type="button" onClick={()=>action()} disabled={loading}><span className="hometaskicon"><Icon size={21}/></span><span><strong>{label}</strong><small>{note}</small></span><ArrowUpRight size={17}/></button>)}</div></section>
-    <div className="homemetrics" aria-label="Workspace summary">{metrics.map(metric => <button type="button" key={metric.label} onClick={metric.action} disabled={loading}><span>{metric.label}<ArrowUpRight size={15}/></span><strong>{loading ? '—' : metric.value}</strong><small>{metric.note}</small></button>)}</div>
-    <DashboardNotifications items={props.notificationItems} loading={props.notificationsLoading} onOpen={props.onOpenNotification} onViewAll={()=>props.onActivity('Notifications')}/>
-    <section className="homecard homeequipment" aria-labelledby="equipment-availability-title" aria-busy={loading}>
-      <div className="homeblockheading"><h2 id="equipment-availability-title"><Package size={17}/>Equipment availability</h2><button type="button" className="assetlink" onClick={()=>props.onEquipment('All')} disabled={loading}>View equipment <ArrowUpRight size={14}/></button></div>
-      <p className="homeequipmentnote">Available means ready to assign, including usable returned items. Select a count to view its equipment.</p>
-      {loading?<p className="homeempty" role="status">Loading equipment counts…</p>:props.equipmentBreakdown?.length?<div className="homeequipmentgrid">{props.equipmentBreakdown.map(item=><article className="homeequipmenttype" key={item.category}><h3>{item.category}</h3>{item.registered===0?<p className="homeequipmentempty">No equipment registered yet</p>:<div className="homeequipmentcounts"><button type="button" onClick={()=>props.onEquipment('Ready',item.category)} aria-label={`View available ${item.category}: ${item.available}`}><span><i className="availabilitydot"/>Available</span><strong>{item.available}</strong></button><button type="button" onClick={()=>props.onEquipment('Assigned',item.category)} aria-label={`View assigned ${item.category}: ${item.assigned}`}><span><i className="availabilitydot assigned"/>Assigned</span><strong>{item.assigned}</strong></button></div>}</article>)}</div>:<p className="homeempty">Equipment counts will appear here once items are registered.</p>}
-    </section>
-    <div className="homecolumns"><section className="homecard" aria-labelledby="attention-title"><div className="homeblockheading"><h2 id="attention-title"><Bell size={17}/>Needs attention</h2></div><div className="homeattention">{attention.map(item => <button type="button" key={item.tab} onClick={() => props.onActivity(item.tab)}><span><strong>{item.label}</strong><small>{item.note}</small></span><b className={item.value ? 'attentionvalue' : ''}>{loading || item.value === null ? '—' : item.value}</b><ArrowUpRight size={16}/></button>)}</div><p className="homequietnote"><CheckCircle2 size={15}/>Open a category to review its supporting records.</p></section>
-    <section className="homecard" aria-labelledby="recent-title"><div className="homeblockheading"><h2 id="recent-title">Recent activity</h2><button type="button" className="assetlink" onClick={() => props.onActivity('Activity Log')}>View history <ArrowUpRight size={14}/></button></div><div className="homerecent">{[...props.events].sort((a,b) => b.date.localeCompare(a.date)).slice(0,4).map(event => <button type="button" key={event.id} onClick={() => props.onAsset(event.assetId)}><span className="homerecenticon"><Package size={17}/></span><span><strong>{event.action}</strong><small>{event.assetId}{event.recordedBy?.name ? ` · ${event.recordedBy.name}` : ''}</small></span><time dateTime={event.date}>{new Date(event.date).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</time></button>)}{!props.events.length&&<p className="homeempty">Equipment movements will appear here as your team works.</p>}</div></section></div>
+  return <div className="workspacehome homeorganized">
+    <div className="homewelcome"><div><span className="eyebrow">WORKSPACE OVERVIEW</span><h1>{props.name ? `Welcome, ${props.name.split(' ')[0]}.` : 'Welcome back.'}</h1><p>Your equipment, team and priorities at a glance.</p></div><span className="homeworkspacebadge"><span className="dot"/>Dental Stars</span></div>
+    <div className="homemetrics" aria-label="Workspace summary">{metrics.map(metric=><button type="button" key={metric.label} onClick={metric.action} disabled={loading}><span>{metric.label}<ArrowUpRight size={15}/></span><strong>{loading?'—':metric.value}</strong><small>{metric.note}</small></button>)}</div>
+    <section className="homequickstart" aria-labelledby="quick-start-title"><h2 id="quick-start-title">Quick actions</h2><div className="hometasks">{tasks.map(({label,note,icon:Icon,action})=><button key={label} type="button" onClick={()=>action()} disabled={loading} title={note}><Icon size={17}/><strong>{label}</strong></button>)}</div></section>
+    <div className="homefocusgrid">
+      <DashboardNotifications limit={3} items={props.notificationItems} loading={props.notificationsLoading} onOpen={props.onOpenNotification} onViewAll={()=>props.onActivity('Notifications')}/>
+      <section className="homecard" aria-labelledby="attention-title"><div className="homeblockheading"><h2 id="attention-title"><Bell size={17}/>Follow-ups</h2></div><div className="homeattention">{attention.map(item=><button type="button" key={item.tab} onClick={()=>props.onActivity(item.tab)}><span><strong>{item.label}</strong><small>{item.note}</small></span><b className={item.value?'attentionvalue':''}>{loading||item.value===null?'—':item.value}</b><ArrowUpRight size={16}/></button>)}</div><p className="homequietnote"><CheckCircle2 size={15}/>Review and resolve items in their supporting records.</p></section>
+    </div>
+    <div className="homedetailgrid">
+      <section className="homecard homeequipment" aria-labelledby="equipment-availability-title" aria-busy={loading}>
+        <div className="homeblockheading"><h2 id="equipment-availability-title"><Package size={17}/>Equipment availability</h2><button type="button" className="assetlink" onClick={()=>props.onEquipment('All')} disabled={loading}>View equipment <ArrowUpRight size={14}/></button></div>
+        <p className="homeequipmentnote">Available includes usable returned items. Select a count to view equipment.</p>
+        {loading?<p className="homeempty" role="status">Loading equipment counts…</p>:<>
+          {registeredTypes.length?<><div className="homeavailabilityhead" aria-hidden="true"><span>Equipment type</span><span>Available</span><span>Assigned</span></div><div className="homeequipmentgrid">{visibleTypes.map(item=><article className="homeequipmenttype" key={item.category}><h3>{item.category}</h3><div className="homeequipmentcounts"><button type="button" onClick={()=>props.onEquipment('Ready',item.category)} aria-label={`View available ${item.category}: ${item.available}`}><strong>{item.available}</strong></button><button type="button" onClick={()=>props.onEquipment('Assigned',item.category)} aria-label={`View assigned ${item.category}: ${item.assigned}`}><strong>{item.assigned}</strong></button></div></article>)}</div>{registeredTypes.length>6&&<button type="button" className="assetlink homeexpandtypes" aria-expanded={showAllTypes} onClick={()=>setShowAllTypes(value=>!value)}>{showAllTypes?'Show fewer types':`Show all ${registeredTypes.length} registered types`}</button>}</>:<p className="homeempty">No equipment registered yet.</p>}
+          {emptyTypes.length>0&&<div className="homeunregistered"><span>Not registered yet</span><div>{emptyTypes.map(item=><button key={item.category} type="button" onClick={()=>props.onEquipment('All',item.category)} aria-label={`View ${item.category}: no equipment registered yet`}>{item.category}</button>)}</div></div>}
+        </>}
+      </section>
+      <section className="homecard" aria-labelledby="recent-title"><div className="homeblockheading"><h2 id="recent-title">Recent activity</h2><button type="button" className="assetlink" onClick={()=>props.onActivity('Activity Log')}>View history <ArrowUpRight size={14}/></button></div><div className="homerecent">{[...props.events].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,3).map(event=><button type="button" key={event.id} onClick={()=>props.onAsset(event.assetId)}><span className="homerecenticon"><Package size={16}/></span><span><strong>{event.action}</strong><small>{event.assetId}{event.recordedBy?.name?' · '+event.recordedBy.name:''}</small></span><time dateTime={event.date}>{new Date(event.date).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}</time></button>)}{!props.events.length&&<p className="homeempty">Equipment movements will appear here.</p>}</div></section>
+    </div>
     <details className="homebreakdown"><summary>Detailed equipment and staff breakdown<span>All status counts and pending actions</span></summary><div className="homebreakdowncontent">{props.children}</div></details>
   </div>;
 }

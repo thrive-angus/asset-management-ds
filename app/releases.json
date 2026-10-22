@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.0",
+    "date": "2026-10-23",
+    "changes": "Simplify Home with compact quick actions, focused notification and follow-up panels, and concise equipment availability."
+  },
+  {
     "version": "1.8.0",
     "date": "2026-10-22",
     "changes": "Show important and unread notifications on the overview with timestamps and linked actions."

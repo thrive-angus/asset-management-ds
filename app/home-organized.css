@@ -1,0 +1,46 @@
+.workspacehome.homeorganized{gap:20px}
+.homeorganized .homewelcome h1{font-size:28px;margin:7px 0}
+.homeorganized .homemetrics{gap:12px}
+.homeorganized .homemetrics>button{padding:16px 18px}
+.homeorganized .homemetrics strong{font-size:28px;margin:10px 0 4px}
+.homeorganized .homequickstart{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+.homeorganized .homequickstart>h2{font-size:12px;font-weight:600;color:#637b89;margin:0}
+.homeorganized .hometasks{display:flex;gap:8px;flex-wrap:wrap}
+.homeorganized .hometasks>button{min-height:40px;padding:9px 13px;gap:8px;border-radius:7px;flex-direction:row;align-items:center}
+.homeorganized .hometasks>button>svg:last-child{width:17px;margin:0;color:#338b83}
+.homeorganized .hometasks strong{font-size:12px;white-space:nowrap}
+.homefocusgrid,.homedetailgrid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:20px;align-items:start}
+.homeorganized .homecard{padding:20px}
+.homeorganized .homeblockheading{gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.homeorganized .homeblockheading>.assetlink{font-size:12px}
+.homeorganized .homeequipmentnote{margin:0 0 12px;font-size:11px}
+.homeorganized .homenotifications{margin:0}
+.homeorganized .homenotificationlist{gap:0}
+.homeorganized .homenotification{padding:12px 0;border:0;border-top:1px solid #e9eff1;border-radius:0;background:transparent}
+.homeorganized .homenotification:hover{background:#f3f9f8}
+.homeorganized .homenotificationbody{gap:5px}
+.homeorganized .homenotificationbody>strong{font-size:13px}
+.homeorganized .homenotificationbody>span:not(.homenotificationmeta){font-size:12px}
+.homeorganized .homenotification time,.homeorganized .homenotification small{font-size:11px}
+.homeorganized .homeattention>button{padding:14px 0}
+.homeorganized .homeempty{padding:16px 0;margin:0}
+.homeorganized .homeequipmentgrid{display:block}
+.homeorganized .homeavailabilityhead,.homeorganized .homeequipmenttype{display:grid;grid-template-columns:minmax(0,1fr) 76px 76px;align-items:center;gap:10px}
+.homeorganized .homeavailabilityhead{padding:8px 0;border-bottom:1px solid #e5edef;font-size:11px;color:#637b89}
+.homeorganized .homeavailabilityhead>span:not(:first-child){text-align:center}
+.homeorganized .homeequipmenttype{padding:8px 0;border:0;border-bottom:1px solid #edf1f3;border-radius:0}
+.homeorganized .homeequipmenttype h3{margin:0;font-size:13px;font-weight:500}
+.homeorganized .homeequipmentcounts{display:contents}
+.homeorganized .homeequipmentcounts button{padding:6px;min-height:36px;text-align:center;background:#f3f8f8}
+.homeorganized .homeequipmentcounts strong{font-size:17px;margin:0}
+.homeorganized .homeunregistered{margin-top:16px;padding-top:14px;border-top:1px solid #e5edef}
+.homeorganized .homeunregistered>span{font-size:11px;color:#637b89}
+.homeorganized .homeunregistered>div{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.homeorganized .homeunregistered button{padding:5px 8px;min-height:32px;border:1px solid #e1e8eb;border-radius:6px;background:#fafcfc;color:#637b89;font-size:11px}
+.homeorganized .homeunregistered button:hover{border-color:#8dbfba;color:#117f7d}
+.homeorganized .homeexpandtypes{font-size:12px;margin-top:12px;min-height:36px}
+.homeorganized .homerecent>button{padding:13px 0;gap:8px}
+.homeorganized .homerecent small{max-width:180px}
+.homeorganized .homebreakdown{padding-top:14px}
+@media(max-width:1100px){.homefocusgrid,.homedetailgrid{grid-template-columns:minmax(0,1fr)}.homeorganized .homequickstart{gap:10px}.homeorganized .homerecent small{max-width:240px}}
+@media(max-width:750px){.workspacehome.homeorganized{gap:16px}.homeorganized .homewelcome h1{font-size:25px}.homeorganized .homemetrics{gap:10px}.homeorganized .homemetrics>button{padding:14px}.homeorganized .homemetrics strong{font-size:25px}.homeorganized .hometasks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));width:100%}.homeorganized .hometasks>button{padding:10px;min-height:42px}.homeorganized .homecard{padding:16px}.homefocusgrid,.homedetailgrid{gap:16px}.homeorganized .homeavailabilityhead,.homeorganized .homeequipmenttype{grid-template-columns:minmax(0,1fr) 64px 64px;gap:6px}.homeorganized .homerecent small{max-width:155px}}
