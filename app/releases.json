@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.7.0",
+    "date": "2026-10-22",
+    "changes": "Alphabetize equipment types and show unregistered types on the dashboard with an empty-state message."
+  },
+  {
     "version": "1.6.2",
     "date": "2026-10-22",
     "changes": "Update the password reset email subject to Dental Stars Tracker App."

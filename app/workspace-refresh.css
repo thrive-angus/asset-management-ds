@@ -86,6 +86,7 @@
 .homeequipmenttype{border:1px solid #e1e8ed;border-radius:9px;padding:17px;min-width:0}
 .homeequipmenttype h3{font-size:14px;font-weight:600;color:#29495a;margin:0 0 13px;overflow-wrap:anywhere}
 .homeequipmentcounts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.homeequipmenttype .homeequipmentempty{display:flex;align-items:center;min-height:76px;margin:0;padding:12px;border-radius:7px;background:#f4f8f9;color:#637b89;font-size:12px;line-height:1.6}
 .homeequipmentcounts button{border:1px solid transparent;border-radius:7px;background:#f4f8f9;padding:10px;text-align:left;color:#29495a;min-width:0}
 .homeequipmentcounts button:hover{background:#eaf5f3;border-color:#b3d5ce}
 .homeequipmentcounts button:focus-visible{outline:2px solid #208c91;outline-offset:3px}
