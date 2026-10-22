@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.10.0",
+    "date": "2026-10-23",
+    "changes": "Improve responsive workspace, filters, dialogs, forms, navigation, staff portal and touch controls across phone, tablet and desktop widths."
+  },
+  {
     "version": "1.9.1",
     "date": "2026-10-23",
     "changes": "Move Home quick actions into the welcome header and remove the workspace badge."

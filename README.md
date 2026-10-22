@@ -233,6 +233,8 @@ The portable build runs Vinext directly without a host `timeout` command. The ma
 
 ## Table pagination
 
+Screen layouts adapt from narrow phones through tablets and desktops. Filters wrap at tablet widths, small-screen forms use one column, dialogs stay within the available viewport, and wide tables/tabs scroll within their own panels. Touch controls use larger targets and editable fields avoid automatic phone zoom. Safe-area padding supports notched screens. Responsive rules are screen-only so printed label dimensions remain unchanged. The responsive pass was checked with sample data at 320, 390, 768, 1024 and 1440 CSS pixels, plus short landscape layouts; this is viewport testing rather than certification on every physical device/browser.
+
 Tables with more than 10 results offer **Rows per page**: 10, 20, 30, 40, 50 or 100. Activity history offers the same **Entries per page** options. The default is 10. Changing the size returns to the first page, and keyed lists remember the chosen size and page when reopened during the same app session. Small tables keep their compact footer; a previously selected larger size remains available after filtering. Page size controls only the displayed rows; exports continue to include all matching records.
 
 ## Password changes and email recovery (VPS / Docker)

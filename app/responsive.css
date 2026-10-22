@@ -1,0 +1,92 @@
+/* Screen layouts share bounds; wide data tables keep their own scroll area. */
+@media screen{
+ .shell main,.shell main>section,.staffportalmain,.signinscreen,.signinlayout,.signinpanel{min-inline-size:0}
+ .shell :is(fieldset,.panel,.report,.formgrid,.filterfield,.filtersearch,.equipmentrecordsection,.equipmentrecordeditor),.staffportal :is(fieldset,.panel,.formgrid){min-inline-size:0;max-inline-size:100%}
+ .shell :is(input,select,textarea),.staffportal :is(input,select,textarea),.signinpanel input{min-inline-size:0;max-inline-size:100%}
+ .shell :is(img,video),.staffportal :is(img,video){max-inline-size:100%;height:auto}
+ .workspace-shell main .administrationpage{grid-template-columns:minmax(0,1fr);max-width:100%;min-width:0}
+ .workspace-shell main .administrationpage>*{min-width:0;max-width:100%}
+ .workspace-shell main :is(.staffrecordtabs,.adminsectiontabs,.equipmentrecordtabs),.staffportal .staffportaltabs{min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-inline:contain;scroll-padding-inline:12px;-webkit-overflow-scrolling:touch}
+ .workspace-shell main .administrationpage>.adminsectiontabs{width:100%;min-width:0;max-width:100%;flex-wrap:nowrap}
+ .shell .tablewrap,.staffportal .tablewrap{min-width:0;max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain;-webkit-overflow-scrolling:touch}
+ .workspace-shell .workspacebreadcrumb{flex:1;min-width:0}
+ .workspace-shell .workspacebreadcrumb strong{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ .shell :is(.panelhead,.historyhead,.staffpanelhead,.modalhead,.modalactions,.equipmentrecordactions,.assetrecordlinks),.staffportal :is(.modalhead,.modalactions){gap:12px;min-width:0}
+ .shell :is(.panelhead,.historyhead,.staffpanelhead,.modalactions,.assetrecordlinks),.staffportal .modalactions{flex-wrap:wrap}
+ .shell :is(h1,h2,h3,.staffrecordidentity,.equipmentrecordbadges,.supplierreceipthead),.staffportal :is(h1,h2,h3,.staffportaltitle){overflow-wrap:anywhere;min-width:0}
+ .overlay .modal{min-width:0;max-width:100%;overscroll-behavior:contain}
+ .overlay .modal .formgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .overlay .modal .formgrid>*,.equipmentrecordeditor .formgrid>*{min-width:0;max-width:100%}
+ .overlay .modalhead h2{min-width:0;overflow-wrap:anywhere}
+ .overlay .modalhead .iconbtn{flex-shrink:0}
+ .shell .labelprintdialog .printlabels{max-width:100%;overflow-x:auto;justify-content:start}
+ .shell .evidencepreview :is(iframe,img,video),.staffportal .evidencepreview :is(iframe,img,video){max-width:100%}
+ .shell .headeraccountmenu{max-width:calc(100vw - 24px);overflow-wrap:anywhere}
+ .equipmentrecordheader h1,.equipmentrecordnotes p,.staffpersonaldetails dd{overflow-wrap:anywhere}
+}
+@media screen and (max-width:1100px){
+ .workspace-shell .homeorganized .homemetrics,.workspace-shell main :is(.stats,.reportsummarycards,.managementmetrics){grid-template-columns:repeat(2,minmax(0,1fr))}
+ .workspace-shell .homeorganized .homewelcome .hometasks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .workspace-shell main .registryview .registertoolbar{flex-wrap:wrap;min-width:0}
+ .workspace-shell main .registertoolbar .filtersearch{flex:1 1 100%;width:100%;min-width:0;max-width:100%}
+ .workspace-shell main .registertoolbar .filterfield:not(.filtersearch){flex:1 1 150px;min-width:0;max-width:100%}
+ .workspace-shell main .registertoolbar .filterfield :is(select,input){width:100%;min-width:0}
+ .workspace-shell main .registertoolbar>button{max-width:100%;flex-shrink:0}
+ .workspace-shell main .reportprimaryfilters,.workspace-shell main .workspacehistoryfilters{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .workspace-shell main .workspacehistoryfilters>label:first-child{grid-column:1/-1}
+ .workspace-shell main .portalaccessformrow{flex-wrap:wrap}
+ .workspace-shell main .portalaccessformrow>label{flex:1 1 200px;min-width:0}
+ .staffportal .staffportalheader{flex-wrap:wrap;gap:12px}
+ .staffportal .staffportalheader>img{width:180px;height:auto;flex-shrink:0}
+ .staffportal .staffportalheader>a{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+ .staffportal .staffportaltoolbar{min-width:0;grid-template-columns:minmax(0,1fr)}
+}
+@media screen and (max-width:750px){
+ .workspace-shell>main>section{padding:20px 14px;min-width:0}
+ .workspace-shell>aside{padding-top:max(12px,env(safe-area-inset-top))}
+ .overlay>.modal{padding-top:max(20px,env(safe-area-inset-top));padding-left:max(16px,env(safe-area-inset-left));padding-right:max(16px,env(safe-area-inset-right))}
+ .workspace-shell main :is(.reportprimaryfilters,.reportfiltergrid,.planningfilters,.workspacehistoryfilters,.managementdetails){grid-template-columns:minmax(0,1fr)}
+ .workspace-shell main .workspacehistoryfilters>label:first-child{grid-column:auto}
+ .shell .formgrid,.staffportal .formgrid,.overlay .modal .formgrid,.shell .ticketreviewidentity dl{grid-template-columns:minmax(0,1fr)}
+ .shell .formgrid>*,.staffportal .formgrid>*{min-width:0;max-width:100%}
+ .shell :is(.primary,.secondary,.iconbtn,.assetlink),.staffportal :is(button,.secondary),.signinpanel button,.shell .staffrecordtabs>button,.staffportal .staffportaltabs>button{min-height:44px}
+ .shell .iconbtn{min-width:44px;flex-shrink:0}
+ .workspace-shell .headerutilities .headeraccount>summary{min-width:44px;min-height:44px}
+ .shell .modalactions>button,.staffportal .modalactions>button{flex:1 1 auto;max-width:100%;white-space:normal}
+ .shell .modalactions{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+ .shell .modalhead,.staffportal .modalhead{align-items:flex-start}
+ .shell .equipmentrecordsavebar{padding-bottom:max(12px,env(safe-area-inset-bottom))}
+ .shell :is(.equipmenttypeform label,.ticketreviewidentity>strong,.recoveryactions .actionwithhelp){min-width:0}
+ .shell .equipmenttypeform label{flex-basis:100%;max-width:100%}
+ .staffportal .staffportalheader{padding:12px 14px;padding-top:max(12px,env(safe-area-inset-top))}
+ .staffportal .staffportalmain{padding:20px 14px;min-width:0}
+ .staffportal :is(.staffportaltitle,.stafflistcaption,.staffportalactions){flex-wrap:wrap;gap:10px}
+ .signinscreen{padding:20px 14px;padding-top:max(20px,env(safe-area-inset-top));padding-bottom:max(20px,env(safe-area-inset-bottom))}
+ .signinlayout,.signinpanel{width:100%;max-width:100%}
+ .signinpanel input{font-size:16px}
+ .signinpanel .securitypasswordtoggle{min-width:44px;min-height:44px;right:0}
+ .shell .homeorganized .hometasks>button{min-height:44px}
+ .shell .homeorganized .hometasks strong{white-space:normal;overflow-wrap:anywhere}
+ .shell .homeorganized .homeunregistered button{min-height:36px}
+}
+@media screen and (max-width:360px){
+ .workspace-shell>main>section{padding-inline:12px}
+ .shell .homeorganized .homewelcome>div:first-child{flex-basis:100%}
+ .shell .homeorganized .hometasks>button{padding:9px 7px;gap:6px}
+ .shell .homeorganized .hometasks strong{font-size:11px}
+ .shell .homeorganized .homeavailabilityhead,.shell .homeorganized .homeequipmenttype{grid-template-columns:minmax(0,1fr) 58px 58px;gap:4px}
+ .shell main :is(.stats,.reportsummarycards,.managementmetrics,.receiptmetrics){grid-template-columns:minmax(0,1fr)}
+ .shell .bundletypeselect{grid-template-columns:minmax(0,1fr)}
+ .shell .headerutilities{gap:4px}
+}
+@media screen and (pointer:coarse){
+ .shell :is(button,.headeraccount>summary),.staffportal :is(button,a.secondary),.signinpanel button{min-height:44px}
+ .shell :is(input:not([type=checkbox]):not([type=radio]),select,textarea),.staffportal :is(input:not([type=checkbox]):not([type=radio]),select,textarea),.signinpanel input{font-size:16px!important}
+}
+@media screen and (max-height:500px) and (orientation:landscape){
+ .overlay{align-items:center;padding:8px}
+ .overlay>.modal{height:auto;max-height:calc(100dvh - 16px);padding:16px}
+ .shell .modalhead,.staffportal .modalhead{position:static}
+ .shell .modalactions,.equipmentrecordsavebar{position:static}
+ .signinscreen{align-items:flex-start;padding-block:16px}
+}
