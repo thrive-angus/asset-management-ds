@@ -2,12 +2,14 @@
 import type { ReactNode } from 'react';
 import { ArrowUpRight, Plus, Users, ScanLine, ArrowLeftRight, Package, CheckCircle2, Bell } from 'lucide-react';
 import type {EquipmentAvailability} from './equipment-availability';
+import DashboardNotifications,{type DashboardNotification} from './dashboard-notifications';
 
 type Event = { id: string; assetId: string; date: string; action: string; recordedBy?: { name?: string } };
 type Props = {
   name?: string; loading: boolean; canManage: boolean; total: number; assigned: number; available: number; people: number;
   followups: number | null; tickets: number | null; notifications: number | null; events: Event[];
   equipmentBreakdown?: EquipmentAvailability[];
+  notificationItems:DashboardNotification[]|null;notificationsLoading:boolean;onOpenNotification:(item:DashboardNotification)=>Promise<void>;
   onEquipment: (scope: string, category?:string) => void; onPeople: () => void; onAddEquipment: () => void; onAddPerson: () => void;
   onScan: () => void; onActivity: (tab: string) => void; onReports: () => void; onAsset: (id: string) => void;
   children: ReactNode;
@@ -41,6 +43,7 @@ export default function WorkspaceHome(props: Props) {
     <div className="homewelcome"><div><span className="eyebrow">YOUR WORKSPACE</span><h1>{props.name ? `Welcome, ${props.name.split(' ')[0]}.` : 'Welcome back.'}</h1><p>Keep equipment moving and your team connected.</p></div><span className="homeworkspacebadge"><span className="dot"/>Dental Stars</span></div>
     <section className="homequickstart" aria-labelledby="quick-start-title"><div className="homeblockheading"><h2 id="quick-start-title">What would you like to do?</h2><span>Start with a task</span></div><div className="hometasks">{tasks.map(({ label, note, icon: Icon, action }) => <button key={label} type="button" onClick={()=>action()} disabled={loading}><span className="hometaskicon"><Icon size={21}/></span><span><strong>{label}</strong><small>{note}</small></span><ArrowUpRight size={17}/></button>)}</div></section>
     <div className="homemetrics" aria-label="Workspace summary">{metrics.map(metric => <button type="button" key={metric.label} onClick={metric.action} disabled={loading}><span>{metric.label}<ArrowUpRight size={15}/></span><strong>{loading ? '—' : metric.value}</strong><small>{metric.note}</small></button>)}</div>
+    <DashboardNotifications items={props.notificationItems} loading={props.notificationsLoading} onOpen={props.onOpenNotification} onViewAll={()=>props.onActivity('Notifications')}/>
     <section className="homecard homeequipment" aria-labelledby="equipment-availability-title" aria-busy={loading}>
       <div className="homeblockheading"><h2 id="equipment-availability-title"><Package size={17}/>Equipment availability</h2><button type="button" className="assetlink" onClick={()=>props.onEquipment('All')} disabled={loading}>View equipment <ArrowUpRight size={14}/></button></div>
       <p className="homeequipmentnote">Available means ready to assign, including usable returned items. Select a count to view its equipment.</p>

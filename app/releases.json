@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.8.0",
+    "date": "2026-10-22",
+    "changes": "Show important and unread notifications on the overview with timestamps and linked actions."
+  },
+  {
     "version": "1.7.0",
     "date": "2026-10-22",
     "changes": "Alphabetize equipment types and show unregistered types on the dashboard with an empty-state message."
