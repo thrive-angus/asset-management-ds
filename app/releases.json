@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.6.2",
+    "date": "2026-10-22",
+    "changes": "Update the password reset email subject to Dental Stars Tracker App."
+  },
+  {
     "version": "1.6.1",
     "date": "2026-10-22",
     "changes": "Improve SMTP verification with safe configuration, authentication and connection diagnostics."

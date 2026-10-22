@@ -13,7 +13,7 @@ export function passwordResetMessage(email,token,settings){
  const url=new URL('/recover-password',settings.origin);
  // A fragment stays out of HTTP request URLs, access logs and referrers.
  url.hash='token='+token;
- return {from:settings.from,to:{address:email,name:''},subject:'Reset your Dental Stars password',text:`A password reset was requested for your Dental Stars Asset Manager account.\n\nChoose a new password using this link:\n${url.href}\n\nThis link expires in 30 minutes and can be used only once. Only the most recently requested link will work.\n\nIf you did not request this, ignore this email. Your password has not changed. Never share this link or your password.`,disableFileAccess:true,disableUrlAccess:true};
+ return {from:settings.from,to:{address:email,name:''},subject:'Reset your Dental Stars Tracker App password',text:`A password reset was requested for your Dental Stars Asset Manager account.\n\nChoose a new password using this link:\n${url.href}\n\nThis link expires in 30 minutes and can be used only once. Only the most recently requested link will work.\n\nIf you did not request this, ignore this email. Your password has not changed. Never share this link or your password.`,disableFileAccess:true,disableUrlAccess:true};
 }
 export async function sendPasswordResetEmail(email,token){
  const settings=passwordMailSettings(),transport=nodemailer.createTransport(settings.transport);
