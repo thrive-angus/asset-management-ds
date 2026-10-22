@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.6.1",
+    "date": "2026-10-22",
+    "changes": "Improve SMTP verification with safe configuration, authentication and connection diagnostics."
+  },
+  {
     "version": "1.6.0",
     "date": "2026-10-22",
     "changes": "Add configurable rows per page across tables and activity history, with 10 to 100 results per page."
