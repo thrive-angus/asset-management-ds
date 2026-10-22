@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.9.1",
+    "date": "2026-10-23",
+    "changes": "Move Home quick actions into the welcome header and remove the workspace badge."
+  },
+  {
     "version": "1.9.0",
     "date": "2026-10-23",
     "changes": "Simplify Home with compact quick actions, focused notification and follow-up panels, and concise equipment availability."
