@@ -9,7 +9,9 @@ export function middleware(req: Request) {
     ? NextResponse.json({ error: 'Cross-origin write requests are not allowed.' }, { status: 403 })
     : NextResponse.next();
   for (const [name, value] of Object.entries(SECURITY_HEADERS)) response.headers.set(name, value);
-  if (isApi) response.headers.set('Cache-Control', 'private, no-store');
+  const isPasswordPage = ['/forgot-password', '/recover-password', '/reset-password', '/account/security'].includes(path);
+  if (isApi || isPasswordPage) response.headers.set('Cache-Control', 'private, no-store');
+  if (isPasswordPage) response.headers.set('Referrer-Policy', 'no-referrer');
   return response;
 }
 

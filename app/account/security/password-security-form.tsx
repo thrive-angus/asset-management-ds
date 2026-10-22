@@ -1,0 +1,11 @@
+'use client';
+import {useState,type FormEvent} from 'react';
+import PasswordInput from '../../password-input';
+import {readApiResponse} from '../../api-response';
+import Link from 'next/link';
+
+export default function PasswordSecurityForm({email}:{email:string}){
+ const [current,setCurrent]=useState(''),[password,setPassword]=useState(''),[confirm,setConfirm]=useState(''),[busy,setBusy]=useState(false),[error,setError]=useState('');
+ async function submit(event:FormEvent){event.preventDefault();setError('');if(password!==confirm){setError('Password confirmation does not match.');return}setBusy(true);try{await readApiResponse(await fetch('/api/auth/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({currentPassword:current,newPassword:password,confirmPassword:confirm})}));setCurrent('');setPassword('');setConfirm('');window.location.assign('/login?password_updated=1')}catch(error){setError(error instanceof Error?error.message:'Unable to change your password.');setBusy(false)}}
+ return <main className="signinscreen"><div className="signinlayout"><section className="signinwelcome"><small className="signineyebrow">Dental Stars</small><h1>Account security</h1><p>Change the password for your sign-in account.</p><ul><li>At least 12 characters</li><li>Include at least three: uppercase, lowercase, numbers and symbols</li><li>You’ll sign in again after changing it; other sessions will be signed out too</li></ul></section><form className="signinpanel" onSubmit={submit}><h2>Change password</h2><p>{email}</p><PasswordInput id="current-password" label="Current password" value={current} onChange={setCurrent} disabled={busy}/><PasswordInput id="changed-password" label="New password" value={password} onChange={setPassword} disabled={busy} newPassword/><PasswordInput id="changed-confirm" label="Confirm new password" value={confirm} onChange={setConfirm} disabled={busy} newPassword/>{error&&<p className="error securitypasswordnotice" role="alert">{error}</p>}<button type="submit" className="primary signinbutton" disabled={busy}>{busy?'Updating…':'Change password'}</button><div className="securitypasswordlinks"><Link href="/">Back to workspace</Link><a href="/forgot-password">Forgot current password?</a></div></form></div></main>;
+}

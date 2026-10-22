@@ -231,6 +231,30 @@ When using the Sites plugin, follow its skill instructions for installation, bui
 
 The portable build runs Vinext directly without a host `timeout` command. The managed-linux build uses `scripts/build-verified.sh` and its existing `SITES_BUILD_TIMEOUT` setting.
 
+## Password changes and email recovery (VPS / Docker)
+
+Signed-in users can open **Change password** from their account menu (or the Staff portal header). They must enter their current password. A successful change signs out all sessions; they sign in again with the new password. This works without an email provider.
+
+**Forgot password?** on the login screen sends a single-use reset link to the account's sign-in email. Email delivery requires an SMTP provider; it is disabled until configured. In Dokploy's application environment, add the values supplied by your mail provider:
+
+```dotenv
+APP_ORIGIN=https://assetmanagement.dentalstarstracker.com.au
+SMTP_HOST=smtp.your-provider.example
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-provider-username
+SMTP_PASSWORD=your-provider-password-or-app-password
+MAIL_FROM=Dental Stars <no-reply@your-verified-domain.example>
+```
+
+Use your actual verified sender address. Port 587 uses required STARTTLS; for port 465 use `SMTP_SECURE=true`. Certificate validation stays enabled. Store credentials in Dokploy, never in Git or chat. See your provider's SMTP settings and [Nodemailer's SMTP documentation](https://nodemailer.com/smtp).
+
+Redeploy after saving the environment. `start:docker` creates the password-reset table in the existing PostgreSQL database. In the deployed container, `node scripts/check-password-email.mjs` checks the configuration, connection and SMTP authentication without sending an email. Then request a reset for a controlled test account and check actual inbox delivery; the connection check alone cannot confirm sender approval or inbox delivery. If delivery fails, the app logs a generic failure without credentials or reset links. Check provider delivery logs and request a fresh link after resolving the configuration.
+
+Links expire after 30 minutes. Only the newest link works. The database stores a token digest, and the link secret is held in a URL fragment and removed from the address bar on opening. Reset completion revokes sessions and other links, and requires signing in again. Password changes do not reactivate suspended access or alter roles. Reset requests return a generic account-independent response and are rate limited. Until SMTP is configured, the request form shows that email recovery is unavailable; it does not claim an email was sent.
+
+Run `node scripts/verify-password-recovery.cjs` for isolated SQL/SMTP security fixtures (no actual database or outbound mail), and `node scripts/verify-security-http.cjs http://127.0.0.1:3199` against a running production preview for HTTP authorization, request limits, origin checks and recovery page headers.
+
 ## Learn More
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)

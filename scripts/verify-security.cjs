@@ -62,7 +62,7 @@ function load(file) {
       if (target === path.join(root, 'app/login-throttle')) return {
         reserveLoginAttempt: async () => budget, clearLoginAttempts: async () => {}, LOGIN_RETRY_SECONDS: 900,
       };
-      return load(target + '.ts');
+      return load(path.extname(target)?target:target + '.ts');
     }
     return require(name);
   });
@@ -79,7 +79,7 @@ function setup(role, reset = false) {
 async function main() {
   let endpoints = 0;
   for (const file of fs.readdirSync(path.join(root, 'app/api'), { recursive: true })) {
-    if (path.basename(file) !== 'route.ts' || file.replaceAll('\\', '/') === 'auth/login/route.ts') continue;
+    if (path.basename(file) !== 'route.ts' || ['auth/login/route.ts','auth/forgot-password/route.ts','auth/reset-password/route.ts'].includes(file.replaceAll('\\', '/'))) continue;
     const route = load(path.join('app/api', file));
     for (const method of ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']) {
       if (typeof route[method] !== 'function') continue;

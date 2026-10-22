@@ -2,6 +2,7 @@
 
 import { FormEvent, useMemo, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
+import PasswordInput from '../password-input';
 
 function safeReturn(value: string | null) {
   if (!value || !value.startsWith('/') || value.startsWith('//')) return '/';
@@ -54,6 +55,7 @@ export default function LoginPage() {
         </section>
         <form className="signinpanel" onSubmit={submit}>
           <h2>Sign In</h2>
+          {params.get('password_updated')==='1'&&<p className="success" role="status">Password updated. Sign in with your new password.</p>}
           <p>Use your assigned app account to continue.</p>
           <label htmlFor="login-email">
             Work Email
@@ -67,23 +69,12 @@ export default function LoginPage() {
               required
             />
           </label>
-          <label htmlFor="login-password">
-            Password
-            <input
-              id="login-password"
-              type="password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              disabled={busy}
-              required
-            />
-          </label>
+          <PasswordInput id="login-password" label="Password" value={password} onChange={setPassword} disabled={busy}/>
           {error && <p className="error signinerror" role="alert">{error}</p>}
           <button type="submit" className="primary signinbutton" disabled={busy}>
             {busy ? 'Signing in…' : 'Sign In'}
           </button>
-          <small className="signinhelp">Need access or password reset? Contact your Administrator.</small>
+          <div className="securitypasswordlinks"><a href="/forgot-password">Forgot password?</a></div><small className="signinhelp">Need access? Contact your Administrator.</small>
         </form>
       </div>
     </main>

@@ -30,6 +30,9 @@ async function init() {
       CREATE INDEX IF NOT EXISTS document_objects_uploaded_at_idx ON document_objects (uploaded_at DESC);
       CREATE TABLE IF NOT EXISTS auth_users (id TEXT PRIMARY KEY, email TEXT NOT NULL UNIQUE, password_hash TEXT NOT NULL, display_name TEXT NOT NULL, must_reset_password BOOLEAN NOT NULL DEFAULT FALSE, created_at TEXT NOT NULL);
       CREATE TABLE IF NOT EXISTS auth_sessions (id TEXT PRIMARY KEY, user_id TEXT NOT NULL, expires_at TEXT NOT NULL, created_at TEXT NOT NULL);
+      CREATE TABLE IF NOT EXISTS auth_password_resets (token_hash TEXT PRIMARY KEY, user_id TEXT NOT NULL REFERENCES auth_users(id) ON DELETE CASCADE, email TEXT NOT NULL, password_hash_snapshot TEXT NOT NULL, expires_at TIMESTAMPTZ NOT NULL);
+      CREATE INDEX IF NOT EXISTS auth_password_resets_user_idx ON auth_password_resets (user_id);
+      CREATE INDEX IF NOT EXISTS auth_password_resets_expiry_idx ON auth_password_resets (expires_at);
       CREATE TABLE IF NOT EXISTS auth_login_attempts (id TEXT PRIMARY KEY, attempts INTEGER NOT NULL, window_started_at TIMESTAMPTZ NOT NULL);
       CREATE INDEX IF NOT EXISTS auth_login_attempts_window_idx ON auth_login_attempts (window_started_at);
       CREATE INDEX IF NOT EXISTS auth_sessions_user_id_idx ON auth_sessions (user_id);

@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.5.0",
+    "date": "2026-10-22",
+    "changes": "Add account password changes and secure email password recovery with configurable SMTP delivery."
+  },
+  {
     "version": "1.4.0",
     "date": "2026-10-22",
     "changes": "Replace existing equipment record popups with dedicated shareable pages, focused sections and explicit editing while preserving equipment workflows and return navigation"
