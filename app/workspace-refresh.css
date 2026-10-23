@@ -54,6 +54,7 @@
 .workspace-shell footer span{color:#9ca8b0}
 .workspaceskip{position:fixed;left:16px;top:-100px;z-index:1000;background:#fff;border:2px solid #117f7d;color:#173348;padding:12px 20px;border-radius:8px}
 .workspaceskip:focus{top:12px}
+@media print{.workspaceskip{display:none!important}}
 .workspace-shell button:focus-visible,.workspace-shell summary:focus-visible{outline:2px solid #168c85;outline-offset:3px}
 .workspacehome{display:grid;gap:26px}
 .workspacehome section{max-width:none;width:auto;margin:0;padding:0}

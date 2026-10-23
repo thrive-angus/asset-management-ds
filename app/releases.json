@@ -1,5 +1,10 @@
 [
   {
+    "version": "1.10.1",
+    "date": "2026-10-23",
+    "changes": "Hide the keyboard skip link from printed receipts and equipment labels."
+  },
+  {
     "version": "1.10.0",
     "date": "2026-10-23",
     "changes": "Improve responsive workspace, filters, dialogs, forms, navigation, staff portal and touch controls across phone, tablet and desktop widths."
